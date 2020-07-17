@@ -98,7 +98,8 @@ func (g *Game) ChangeTurn() {
 }
 
 // RevealCard reveals the Card on the rth row and the cth column of the
-// gameBoard. Calls that Card's Reveal() method.
+// gameBoard. Calls that Card's Reveal() method, and updates the game state
+// accordingly.
 func (g *Game) RevealCard(r, c int) error {
 	// Input validation.
 	if r < 0 || r >= boardSize || c < 0 || c >= boardSize {
@@ -106,7 +107,46 @@ func (g *Game) RevealCard(r, c int) error {
 			r, c, boardSize)
 	}
 
-	g.Board[r][c].Reveal()
+	if g.IsFinished != 0 {
+		return fmt.Errorf("cannot reveal a card after the game has finished")
+	}
+	if g.RemainingFlips <= 0 {
+		return fmt.Errorf("cannot reveal a card when RemainingFlips = %d",
+			g.RemainingFlips)
+	}
+
+	class := g.Board[r][c].Reveal()
+	if class == -1 {
+		// The card has already been revealed. NOP.
+		return nil
+	} else if class == 0 {
+		// The card is neutral. End the turn without touching the game's score.
+		g.ChangeTurn()
+		return nil
+	} else if class == 1 {
+		g.RedTeamScore++
+	} else if class == 2 {
+		g.BlueTeamScore++
+	} else if class == 3 {
+		// The card is the assassin. End the game immediately.
+		if g.IsItRedTeamsTurn {
+			g.IsFinished = 2
+		} else {
+			g.IsFinished = 1
+		}
+		return nil
+	}
+
+	g.IsFinished = g.EvaluateWinner()
+	if g.IsFinished > 0 {
+		return nil
+	}
+
+	g.RemainingFlips--
+	if g.RemainingFlips <= 0 {
+		g.ChangeTurn()
+	}
+
 	return nil
 }
 
