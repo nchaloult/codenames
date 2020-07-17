@@ -9,9 +9,10 @@ import (
 const (
 	maxRedTeamScore  = 9
 	maxBlueTeamScore = 8
+	boardSize        = 5
 )
 
-type gameBoard [5][5]*Card
+type gameBoard [boardSize][boardSize]*Card
 
 // Game maintains state about an avtive game of Codenames, and exposes functions
 // which mutate that state, allowing the game to progress.
@@ -98,8 +99,15 @@ func (g *Game) ChangeTurn() {
 
 // RevealCard reveals the Card on the rth row and the cth column of the
 // gameBoard. Calls that Card's Reveal() method.
-func (g *Game) RevealCard(r, c int) int {
-	return g.Board[r][c].Reveal()
+func (g *Game) RevealCard(r, c int) error {
+	// Input validation.
+	if r < 0 || r >= boardSize || c < 0 || c >= boardSize {
+		return fmt.Errorf("The provided r (%d) and c (%d) must be within the range: [0, %d)",
+			r, c, boardSize)
+	}
+
+	g.Board[r][c].Reveal()
+	return nil
 }
 
 // SetFlipsForCurrentTurn sets the number of remaining card flips for the active
