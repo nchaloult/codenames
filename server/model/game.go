@@ -91,10 +91,17 @@ func createBoard(dictionary [25]string) gameBoard {
 	return board
 }
 
-// ChangeTurn changes which team's turn it is.
-func (g *Game) ChangeTurn() {
+// ChangeTurn changes which team's turn it is. Returns an error if called before
+// it's possible to change who's turn it is (i.e., if a team's spymaster has yet
+// to give their clue).
+func (g *Game) ChangeTurn() error {
+	if g.RemainingFlips == -1 {
+		return fmt.Errorf("The current team's spymaster hasn't given their clue yet")
+	}
+
 	g.IsItRedTeamsTurn = !g.IsItRedTeamsTurn
 	g.RemainingFlips = -1
+	return nil
 }
 
 // RevealCard reveals the Card on the rth row and the cth column of the
