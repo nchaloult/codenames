@@ -22,11 +22,15 @@ func NewCard(word string, classification int) *Card {
 }
 
 // Reveal sets this Card's IsRevealed field to true. Returns this Card's
-// classification.
+// classification. Returns -1 if this Card has already been revealed.
 //
 // A Card that's been revealed can't be "un"-revealed; revealing a Card is an
 // idempotent operation.
 func (c *Card) Reveal() int {
+	if c.IsRevealed {
+		return -1
+	}
+
 	c.IsRevealed = true
 	return c.Classification
 }
