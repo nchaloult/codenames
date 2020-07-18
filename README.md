@@ -1,5 +1,7 @@
 # codenames
 
+[![server-tests](https://github.com/nchaloult/codenames/workflows/server-tests/badge.svg)](https://github.com/nchaloult/codenames/actions)
+
 Bringing a popular board game online that you can play in real time with your friends
 
 ## Launching with Docker
