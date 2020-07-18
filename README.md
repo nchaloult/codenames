@@ -1,6 +1,7 @@
 # codenames
 
 [![server-tests](https://github.com/nchaloult/codenames/workflows/server-tests/badge.svg)](https://github.com/nchaloult/codenames/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/nchaloult/codenames)](https://goreportcard.com/report/github.com/nchaloult/codenames)
 
 Bringing a popular board game online that you can play in real time with your friends
 
