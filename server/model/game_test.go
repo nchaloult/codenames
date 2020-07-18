@@ -32,6 +32,36 @@ func TestGameCreation(t *testing.T) {
 	}
 }
 
+// TestInvalidClues makes sure that a team's spymaster cannot give a clue with
+// an invalid number: a number that's either greater than that team's number of
+// remaining cards, or less than 1.
+func TestInvalidClues(t *testing.T) {
+	dictionary := [25]string{"foo", "bar"}
+	game := NewGame(dictionary)
+
+	tests := []struct {
+		clue             int
+		redTeamScore     int
+		blueTeamScore    int
+		isItRedTeamsTurn bool
+	}{
+		{-1, 0, 0, true},
+		{0, 0, 0, true},
+		{maxRedTeamScore, 1, 0, true},
+		{maxBlueTeamScore, 0, 1, false},
+	}
+	for _, c := range tests {
+		game.RedTeamScore = c.redTeamScore
+		game.BlueTeamScore = c.blueTeamScore
+		game.IsItRedTeamsTurn = c.isItRedTeamsTurn
+
+		err := game.SetFlipsForCurrentTurn(c.clue)
+		if err == nil {
+			t.Fatalf("expected SetFlipsForCurrentTurn(%d) to return an error, but ti did not", c.clue)
+		}
+	}
+}
+
 // TestFlipOutOfBounds makes sure that the game state doesn't change if flipping
 // a card that doesn't exist, or that is out of bounds, is attempted.
 func TestFlipOutOfBounds(t *testing.T) {
