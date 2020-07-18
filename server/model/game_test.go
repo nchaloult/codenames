@@ -57,3 +57,162 @@ func TestFlipOutOfBounds(t *testing.T) {
 		}
 	}
 }
+
+// TestCommonScenarios makes sure that the game score updates appropriately in a
+// plethora of common situations or game states.
+func TestCommonScenarios(t *testing.T) {
+	dictionary := [25]string{"foo", "bar"}
+	game := NewGame(dictionary)
+	// Build "dummy" game board with Cards of all different category types.
+	dummyGameBoard := gameBoard{
+		[5]*Card{
+			NewCard("neutral", 0),
+			NewCard("neutral", 0),
+			NewCard("redTeam", 1),
+			NewCard("blueTeam", 2),
+			NewCard("assassin", 3),
+		},
+	}
+	game.Board = dummyGameBoard
+
+	// Scenario: attempt to reveal a card before your team's spymaster has given
+	// their clue for this turn.
+	err := game.RevealCard(0, 0)
+	if err == nil {
+		t.Fatal("expected RevealCard(0, 0) to return error when RemainingFlips = -1")
+	}
+
+	game.SetFlipsForCurrentTurn(1)
+	// Scenario: reveal a neutral card with your team's final flip this turn.
+	err = game.RevealCard(0, 0)
+	if err != nil {
+		t.Fatalf("unexpected error when using team's final flip on a neutral card: %v",
+			err)
+	}
+	if game.RedTeamScore != 0 {
+		t.Fatalf("RedTeamScore changed after revealing a neutral card. got: %d, want: %d",
+			game.RedTeamScore, 0)
+	}
+	if game.BlueTeamScore != 0 {
+		t.Fatalf("BlueTeamScore changed after red team revealed a neutral card. got: %d, want: %d",
+			game.BlueTeamScore, 0)
+	}
+	if game.IsItRedTeamsTurn {
+		t.Fatal("team did not change after the use of a turn's final flip")
+	}
+	if game.RemainingFlips != -1 {
+		t.Fatalf("unexpected RemainingFlips after a turn change. got: %d, want: %d",
+			game.RemainingFlips, -1)
+	}
+	if game.IsFinished != 0 {
+		t.Fatalf("unexpected IsFinished after a normal turn change. got: %d, want: %d",
+			game.IsFinished, 0)
+	}
+
+	game.SetFlipsForCurrentTurn(2)
+	// Scenario: reveal a neutral card with more flips remaining this turn.
+	err = game.RevealCard(0, 1)
+	if err != nil {
+		t.Fatalf("unexpected error when revealing a neutral card with more flips remaining: %v",
+			err)
+	}
+	if game.RedTeamScore != 0 {
+		t.Fatalf("RedTeamScore changed after blue team revealed a neutral card. got: %d, want: %d",
+			game.RedTeamScore, 0)
+	}
+	if game.BlueTeamScore != 0 {
+		t.Fatalf("BlueTeamScore changed after revealing a neutral card. got: %d, want: %d",
+			game.BlueTeamScore, 0)
+	}
+	if !game.IsItRedTeamsTurn {
+		t.Fatal("team did not change after revealing a neutral card")
+	}
+	if game.RemainingFlips != -1 {
+		t.Fatalf("unexpected RemainingFlips after a turn change. got: %d, want: %d",
+			game.RemainingFlips, -1)
+	}
+	if game.IsFinished != 0 {
+		t.Fatalf("unexpected IsFinished after a normal turn change. got: %d, want: %d",
+			game.IsFinished, 0)
+	}
+
+	game.SetFlipsForCurrentTurn(1)
+	// Scenario: reveal one of your team's cards with your team's final flip
+	// this turn.
+	err = game.RevealCard(0, 2)
+	if err != nil {
+		t.Fatalf("unexpected error when revealing one of your team's cards with your team's last flip this turn: %v",
+			err)
+	}
+	if game.RedTeamScore != 1 {
+		t.Fatalf("unexpected RedTeamScore after red team revealed one of their cards: got: %d, want: %d",
+			game.RedTeamScore, 1)
+	}
+	if game.BlueTeamScore != 0 {
+		t.Fatalf("BlueTeamScore changed after red team revealed one of their cards. got: %d, want: %d",
+			game.BlueTeamScore, 0)
+	}
+	if game.IsItRedTeamsTurn {
+		t.Fatal("team did not change after a last flip for this turn was used")
+	}
+	if game.RemainingFlips != -1 {
+		t.Fatalf("unexpected RemainingFlips after a turn change. got: %d, want: %d",
+			game.RemainingFlips, -1)
+	}
+	if game.IsFinished != 0 {
+		t.Fatalf("unexpected IsFinished after a normal turn change. got: %d, want: %d",
+			game.IsFinished, 0)
+	}
+
+	game.SetFlipsForCurrentTurn(2)
+	// Scenario: reveal one of your team's cards with more flips remaining this
+	// turn.
+	err = game.RevealCard(0, 3)
+	if err != nil {
+		t.Fatalf("unexpected error when revealing one of your team's cards with more flips left: %v",
+			err)
+	}
+	if game.RedTeamScore != 1 {
+		t.Fatalf("unexpected RedTeamScore after blue team revealed one of their cards: got: %d, want: %d",
+			game.RedTeamScore, 1)
+	}
+	if game.BlueTeamScore != 1 {
+		t.Fatalf("unexpected BlueTeamScore after blue team revealed one of their cards: got: %d, want: %d",
+			game.BlueTeamScore, 1)
+	}
+	if game.IsItRedTeamsTurn {
+		t.Fatal("unexpected team change after a flip when more flips remain")
+	}
+	if game.RemainingFlips != 1 {
+		t.Fatalf("unexpected RemainingFlips after a normal card flip. got: %d, want %d",
+			game.RemainingFlips, 1)
+	}
+	if game.IsFinished != 0 {
+		t.Fatalf("unexpected IsFinished after a normal card flip. got: %d, want: %d",
+			game.IsFinished, 0)
+	}
+
+	// Scenario: reveal the assassin.
+	err = game.RevealCard(0, 4)
+	if err != nil {
+		t.Fatalf("unexpected error when revealing the assassin: %v", err)
+	}
+	if game.RedTeamScore != 1 {
+		t.Fatalf("unexpected RedTeamScore change after blue team revealed the assassin. got: %d, want: %d",
+			game.RedTeamScore, 1)
+	}
+	if game.BlueTeamScore != 1 {
+		t.Fatalf("unexpected BlueTeamScore change after blue team revealed the assassin. got: %d, want: %d",
+			game.BlueTeamScore, 1)
+	}
+	if game.IsItRedTeamsTurn {
+		t.Fatal("unexpected team change after the assassin was revealed")
+	}
+	if game.RemainingFlips != 1 {
+		t.Fatal("unexpected RemainingFlips mutation after the assassin was revealed")
+	}
+	if game.IsFinished != 1 {
+		t.Fatalf("unexpected IsFinished after blue team revealed the assassin. got: %d, want: %d",
+			game.IsFinished, 1)
+	}
+}
