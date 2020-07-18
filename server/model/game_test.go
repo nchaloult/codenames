@@ -246,3 +246,48 @@ func TestCommonScenarios(t *testing.T) {
 			game.IsFinished, 1)
 	}
 }
+
+// TestEndgameScenarios makes sure that the game state updates accordingly when
+// a game-ending move is made.
+func TestEndgameScenarios(t *testing.T) {
+	dictionary := [25]string{"foo", "bar"}
+	game := NewGame(dictionary)
+	dummyGameBoard := gameBoard{
+		[5]*Card{
+			NewCard("redTeam", 1),
+			NewCard("blueTeam", 2),
+		},
+	}
+
+	tests := []struct {
+		redTeamScore       int
+		blueTeamScore      int
+		isItRedTeamsTurn   bool
+		expectedIsFinished int
+	}{
+		{maxRedTeamScore - 1, 0, true, 1},
+		{0, maxBlueTeamScore - 1, false, 2},
+	}
+	for _, c := range tests {
+		// Prepare the game state for the next test case.
+		dummyGameBoard[0][0].IsRevealed = false
+		dummyGameBoard[0][1].IsRevealed = false
+		game.Board = dummyGameBoard
+		game.RedTeamScore = c.redTeamScore
+		game.BlueTeamScore = c.blueTeamScore
+		game.IsItRedTeamsTurn = c.isItRedTeamsTurn
+		game.IsFinished = 0
+
+		game.SetFlipsForCurrentTurn(1)
+		if c.isItRedTeamsTurn {
+			game.RevealCard(0, 0)
+		} else {
+			game.RevealCard(0, 1)
+		}
+
+		if game.IsFinished != c.expectedIsFinished {
+			t.Errorf("unexpected IsFinished: got: %d, want: %d",
+				game.IsFinished, c.expectedIsFinished)
+		}
+	}
+}
