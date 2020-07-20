@@ -13,9 +13,14 @@ const App: React.FC = () => {
       <div className="card card-sm">
         <h1>Codenames</h1>
         <p>
-          Play the popular{' '}
-          <a href="https://www.youtube.com/watch?v=zQVHkl8oQEU">Codenames</a>{' '}
-          board game online with your friends.
+          Play the{' '}
+          <a
+            href="https://www.youtube.com/watch?v=zQVHkl8oQEU"
+            target="_blank"
+            rel="noopener noreferrer">
+            popular board game
+          </a>{' '}
+          online with your friends.
         </p>
         <div id="form-sm-wrapper">
           <form className="form-sm" onSubmit={(e) => handleGameIDFormSubmit(e)}>
