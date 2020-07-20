@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const App: React.FC = () => {
-  const [gameID, setGameID] = useState('game-id');
+  const [gameID, setGameID] = useState('');
 
   const handleGameIDFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,6 +22,7 @@ const App: React.FC = () => {
             <input
               type="text"
               value={gameID}
+              placeholder="game-id"
               onChange={(e) => setGameID(e.target.value)}
             />
             <button type="submit">Play</button>
