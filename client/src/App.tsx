@@ -17,15 +17,19 @@ const App: React.FC = () => {
           <a href="https://www.youtube.com/watch?v=zQVHkl8oQEU">Codenames</a>{' '}
           board game online with your friends.
         </p>
-        <p>Enter a game ID to join an existing game or to create a new one.</p>
-        <form className="form-sm" onSubmit={(e) => handleGameIDFormSubmit(e)}>
-          <input
-            type="text"
-            value={gameID}
-            onChange={(e) => setGameID(e.target.value)}
-          />
-          <button type="submit">Play</button>
-        </form>
+        <div id="form-sm-wrapper">
+          <form className="form-sm" onSubmit={(e) => handleGameIDFormSubmit(e)}>
+            <input
+              type="text"
+              value={gameID}
+              onChange={(e) => setGameID(e.target.value)}
+            />
+            <button type="submit">Play</button>
+          </form>
+        </div>
+        <p className="subtext">
+          Enter a game ID to join an existing game or to create a new one.
+        </p>
       </div>
     </div>
   );
