@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import LandingPageLinks from './components/LandingPageLinks';
 
 const App: React.FC = () => {
   const [gameID, setGameID] = useState('');
@@ -37,6 +38,7 @@ const App: React.FC = () => {
           Enter a game ID to join an existing game or to create a new one.
         </p>
       </div>
+      <LandingPageLinks />
     </div>
   );
 };
