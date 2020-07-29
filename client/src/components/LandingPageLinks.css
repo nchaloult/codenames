@@ -1,0 +1,15 @@
+#landing-page-links {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 1rem;
+}
+
+.external-link-icon {
+  color: #bbb;
+  transition: all 0.2s;
+}
+
+.external-link-icon:hover {
+  color: #00695c;
+}
