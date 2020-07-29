@@ -1,9 +1,9 @@
 import React from 'react';
-import './LandingPageLinks.css';
+import './LandingScreenLinks.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 
-const LandingPageLinks: React.FC = () => (
+const LandingScreenLinks: React.FC = () => (
   <div id="landing-page-links">
     <a
       href="https://github.com/nchaloult/codenames"
@@ -20,4 +20,4 @@ const LandingPageLinks: React.FC = () => (
   </div>
 );
 
-export default LandingPageLinks;
+export default LandingScreenLinks;
