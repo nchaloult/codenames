@@ -1,11 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 
-ReactDOM.render(
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import LandingScreen from './screens/LandingScreen';
+
+const App: React.FC = () => (
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root'),
+    <BrowserRouter>
+      <Switch>
+        <Route path="/">
+          <LandingScreen />
+        </Route>
+      </Switch>
+    </BrowserRouter>
+  </React.StrictMode>
 );
+
+ReactDOM.render(<App />, document.getElementById('root'));
