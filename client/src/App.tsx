@@ -1,46 +1,15 @@
-import React, { useState } from 'react';
-import LandingPageLinks from './components/LandingPageLinks';
+import React from 'react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import LandingScreen from './screens/LandingScreen';
 
-const App: React.FC = () => {
-  const [gameID, setGameID] = useState('');
-
-  const handleGameIDFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    alert(`Temporary! Sending gameID: ${gameID} logic goes here soon :)`);
-  };
-
-  return (
-    <div className="container centered-container">
-      <div className="card card-sm">
-        <h1>Codenames</h1>
-        <p>
-          Play the{' '}
-          <a
-            href="https://www.youtube.com/watch?v=zQVHkl8oQEU"
-            target="_blank"
-            rel="noopener noreferrer">
-            popular board game
-          </a>{' '}
-          online with your friends.
-        </p>
-        <div id="form-sm-wrapper">
-          <form className="form-sm" onSubmit={(e) => handleGameIDFormSubmit(e)}>
-            <input
-              type="text"
-              value={gameID}
-              placeholder="game-id"
-              onChange={(e) => setGameID(e.target.value)}
-            />
-            <button type="submit">Play</button>
-          </form>
-        </div>
-        <p className="subtext">
-          Enter a game ID to join an existing game or to create a new one.
-        </p>
-      </div>
-      <LandingPageLinks />
-    </div>
-  );
-};
+const App: React.FC = () => (
+  <BrowserRouter>
+    <Switch>
+      <Route path="/">
+        <LandingScreen />
+      </Route>
+    </Switch>
+  </BrowserRouter>
+);
 
 export default App;
