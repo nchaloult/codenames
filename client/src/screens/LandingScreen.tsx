@@ -1,12 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 import LandingScreenLinks from '../components/LandingScreenLinks';
+import { RootState } from '../store';
+import setGameID from '../store/game/actions';
 
-const LandingScreen: React.FC = () => {
-  const [gameID, setGameID] = useState('');
+// Redux business.
 
+const mapState = (state: RootState) => ({
+  gameID: state.game.id,
+});
+const mapDispatch = {
+  setGameID: (id: string) => setGameID(id),
+};
+const connector = connect(mapState, mapDispatch);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+// Component.
+
+const LandingScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
   const handleGameIDFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert(`Temporary! Sending gameID: ${gameID} logic goes here soon :)`);
+    alert(`Temporary! Sending gameID: ${props.gameID} logic goes here soon :)`);
   };
 
   return (
@@ -27,9 +41,9 @@ const LandingScreen: React.FC = () => {
           <form className="form-sm" onSubmit={(e) => handleGameIDFormSubmit(e)}>
             <input
               type="text"
-              value={gameID}
+              value={props.gameID}
               placeholder="game-id"
-              onChange={(e) => setGameID(e.target.value)}
+              onChange={(e) => props.setGameID(e.target.value)}
             />
             <button type="submit">Play</button>
           </form>
@@ -43,4 +57,4 @@ const LandingScreen: React.FC = () => {
   );
 };
 
-export default LandingScreen;
+export default connector(LandingScreen);
