@@ -40,6 +40,7 @@ const LandingScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
         <div id="form-sm-wrapper">
           <form className="form-sm" onSubmit={(e) => handleGameIDFormSubmit(e)}>
             <input
+              autoFocus
               type="text"
               value={props.gameID}
               placeholder="game-id"
