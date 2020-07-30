@@ -1,31 +1,17 @@
-import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
+import React, { useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import LandingScreenLinks from '../components/LandingScreenLinks';
-import { RootState } from '../store';
-import setGameID from '../store/game/actions';
 
-// Redux business.
-
-const mapState = (state: RootState) => ({
-  gameID: state.game.id,
-});
-const mapDispatch = {
-  setGameID: (id: string) => setGameID(id),
-};
-const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-// Component.
-
-type Props = PropsFromRedux & RouteComponentProps<any>;
+type Props = RouteComponentProps<any>;
 
 const LandingScreen: React.FC<Props> = (props: Props) => {
-  const handleGameIDFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const [gameID, setGameID] = useState('');
 
-    // TODO: temporary! Implement relevant business logic here.
-    props.history.push('/create');
+  const handleGameIDFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // Just redirect users to the /:gameID route. Submitting this form is no
+    // different than navigating to the /:gameID route manually.
+    e.preventDefault();
+    props.history.push(`/${gameID}`);
   };
 
   return (
@@ -47,9 +33,9 @@ const LandingScreen: React.FC<Props> = (props: Props) => {
             <input
               autoFocus
               type="text"
-              value={props.gameID}
+              value={gameID}
               placeholder="game-id"
-              onChange={(e) => props.setGameID(e.target.value)}
+              onChange={(e) => setGameID(e.target.value)}
             />
             <button type="submit">Play</button>
           </form>
@@ -63,4 +49,4 @@ const LandingScreen: React.FC<Props> = (props: Props) => {
   );
 };
 
-export default connector(LandingScreen);
+export default LandingScreen;
