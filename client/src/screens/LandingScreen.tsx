@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
 import LandingScreenLinks from '../components/LandingScreenLinks';
 import { RootState } from '../store';
 import setGameID from '../store/game/actions';
@@ -17,10 +18,14 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 // Component.
 
-const LandingScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
+type Props = PropsFromRedux & RouteComponentProps<any>;
+
+const LandingScreen: React.FC<Props> = (props: Props) => {
   const handleGameIDFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert(`Temporary! Sending gameID: ${props.gameID} logic goes here soon :)`);
+
+    // TODO: temporary! Implement relevant business logic here.
+    props.history.push('/create');
   };
 
   return (
