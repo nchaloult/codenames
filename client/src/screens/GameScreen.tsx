@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { RootState } from '../store';
 import { setIsCreated, setGameID } from '../store/game/actions';
+import Loading from '../components/Loading';
 import CreateGameScreen from './CreateGameScreen';
 
 // In this component, a Websocket connection is established with the server.
@@ -27,6 +28,8 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux & RouteComponentProps<any>;
 
 const GameScreen: React.FC<Props> = (props: Props) => {
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const gameIDFromURL: string = props.match.params.gameID;
     props.setGameID(gameIDFromURL);
@@ -38,12 +41,19 @@ const GameScreen: React.FC<Props> = (props: Props) => {
     // with the provided ID doesn't exist, therefore we'll be creating a new
     // one.
     props.setIsCreated(false);
+
+    setIsLoading(false);
   }, []);
 
   return (
     <>
-      {props.isCreated && <p>join game screen goes here</p>}
-      {!props.isCreated && <CreateGameScreen />}
+      {isLoading && <Loading />}
+      {!isLoading && (
+        <>
+          {props.isCreated && <p>join game screen goes here</p>}
+          {!props.isCreated && <CreateGameScreen />}
+        </>
+      )}
     </>
   );
 };
