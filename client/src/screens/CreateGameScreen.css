@@ -1,0 +1,18 @@
+.even-columns {
+  display: flex;
+}
+
+.even-columns > div {
+  flex: 1 1 0px;
+}
+
+.indented-col {
+  margin: 0.5rem;
+  padding: 1.5rem;
+  background: #eee;
+  border-radius: 12px;
+}
+
+#create-game-btn {
+  margin-top: 2rem;
+}

@@ -184,26 +184,39 @@ input[type='text']:focus {
 
 button {
   padding: 0.75rem 1.25rem;
-  background: #00695c;
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
   border: none;
   border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
   transition: all 0.2s;
 }
-
 button:hover {
   cursor: pointer;
-  background: #00897b;
+}
+button:focus {
+  outline: none;
 }
 
-button:active {
+.primary-btn {
+  background: #00695c;
+  color: white;
+}
+.primary-btn:hover {
+  background: #00897b;
+}
+.primary-btn:active {
   background: #00695c;
 }
 
-button:focus {
-  outline: none;
+.secondary-btn {
+  background: #eee;
+  color: #212121;
+}
+.secondary-btn:hover {
+  background: #ddd;
+}
+.secondary-btn:active {
+  background: #eee;
 }
 
 /* Cards */

@@ -37,7 +37,9 @@ const LandingScreen: React.FC<Props> = (props: Props) => {
               placeholder="game-id"
               onChange={(e) => setGameID(e.target.value)}
             />
-            <button type="submit">Play</button>
+            <button className="primary-btn" type="submit">
+              Play
+            </button>
           </form>
         </div>
         <p className="subtext">
