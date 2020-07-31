@@ -2,6 +2,7 @@ import React from 'react';
 import './CreateGameScreen.css';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../store';
+import DisplayName from '../components/DisplayName';
 
 // Redux business.
 
@@ -20,6 +21,7 @@ const CreateGameScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => (
         <div>
           <h1>Create a New Game</h1>
           <h3>{props.gameID.toUpperCase()}</h3>
+          <DisplayName />
           <button className="secondary-btn" type="button">
             Join Red Team
           </button>
