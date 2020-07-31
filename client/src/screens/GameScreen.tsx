@@ -5,6 +5,7 @@ import { RootState } from '../store';
 import { setIsCreated, setGameID, setIsJoined } from '../store/game/actions';
 import Loading from '../components/Loading';
 import CreateGameScreen from './CreateGameScreen';
+import BoardScreen from './BoardScreen';
 
 // In this component, a Websocket connection is established with the server.
 // Depending on whether the game with the provided gameID has already been
@@ -54,7 +55,7 @@ const GameScreen: React.FC<Props> = (props: Props) => {
     return <Loading />;
   }
   if (props.isJoined) {
-    return <p>game board screen goes here</p>;
+    return <BoardScreen />;
   }
   if (props.isCreated) {
     return <p>join game screen goes here</p>;
