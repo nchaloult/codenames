@@ -3,6 +3,7 @@ import './CreateGameScreen.css';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../store';
 import DisplayName from '../components/DisplayName';
+import TeamMembersList from '../components/TeamMembersList';
 
 // Redux business.
 
@@ -35,12 +36,8 @@ const CreateGameScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => (
             Create Game
           </button>
         </div>
-        <div className="indented-col">
-          <h2>Red Team</h2>
-        </div>
-        <div className="indented-col">
-          <h2>Blue Team</h2>
-        </div>
+        <TeamMembersList title="Red Team" />
+        <TeamMembersList title="Blue Team" />
       </div>
     </div>
   </div>
