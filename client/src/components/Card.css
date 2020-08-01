@@ -3,6 +3,23 @@
   align-items: center;
   justify-content: center;
   background: white;
+  transition: all 0.2s;
+}
+#card-container:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+  box-shadow: 0 14px 28px rgba(27, 33, 48, 0.06),
+    0 10px 10px rgba(27, 33, 48, 0.02);
+  -webkit-box-shadow: 0 14px 28px rgba(27, 33, 48, 0.06),
+    0 10px 10px rgba(27, 33, 48, 0.02);
+  -moz-box-shadow: 0 14px 28px rgba(27, 33, 48, 0.06),
+    0 10px 10px rgba(27, 33, 48, 0.02);
+}
+#card-container:active {
+  transform: scale(1);
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
 }
 
 #card-word {
