@@ -5,7 +5,7 @@ import { RootState } from '../store';
 import { Card } from '../store/board/types';
 import CardComponent from './Card';
 
-// React business.
+// Redux business.
 
 const mapState = (state: RootState) => ({
   board: state.board.board,

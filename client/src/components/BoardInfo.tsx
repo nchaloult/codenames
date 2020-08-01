@@ -2,6 +2,8 @@ import React from 'react';
 import './BoardInfo.css';
 
 // Redux business.
+// TODO: wire up corresponding fields in the global store (like game score, for
+// instance) once they're added.
 
 // Component.
 

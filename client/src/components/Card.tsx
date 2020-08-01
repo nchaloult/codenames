@@ -3,7 +3,7 @@ import './Card.css';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../store';
 
-// React business.
+// Redux business.
 
 const mapState = (state: RootState) => ({
   board: state.board.board,
