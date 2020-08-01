@@ -1,0 +1,11 @@
+#card-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+#card-word {
+  font-size: 1rem;
+  font-weight: bold;
+}
