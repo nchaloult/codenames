@@ -1,0 +1,10 @@
+.even-columns {
+  display: flex;
+}
+.even-columns > * {
+  flex: 1 1 0px;
+}
+
+#create-game-btn {
+  margin-top: 2rem;
+}

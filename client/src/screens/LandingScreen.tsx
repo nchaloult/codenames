@@ -1,26 +1,17 @@
-import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
+import React, { useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import LandingScreenLinks from '../components/LandingScreenLinks';
-import { RootState } from '../store';
-import setGameID from '../store/game/actions';
 
-// Redux business.
+type Props = RouteComponentProps<any>;
 
-const mapState = (state: RootState) => ({
-  gameID: state.game.id,
-});
-const mapDispatch = {
-  setGameID: (id: string) => setGameID(id),
-};
-const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
+const LandingScreen: React.FC<Props> = (props: Props) => {
+  const [gameID, setGameID] = useState('');
 
-// Component.
-
-const LandingScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
   const handleGameIDFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // Just redirect users to the /:gameID route. Submitting this form is no
+    // different than navigating to the /:gameID route manually.
     e.preventDefault();
-    alert(`Temporary! Sending gameID: ${props.gameID} logic goes here soon :)`);
+    props.history.push(`/${gameID}`);
   };
 
   return (
@@ -42,11 +33,13 @@ const LandingScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
             <input
               autoFocus
               type="text"
-              value={props.gameID}
+              value={gameID}
               placeholder="game-id"
-              onChange={(e) => props.setGameID(e.target.value)}
+              onChange={(e) => setGameID(e.target.value)}
             />
-            <button type="submit">Play</button>
+            <button className="primary-btn" type="submit">
+              Play
+            </button>
           </form>
         </div>
         <p className="subtext">
@@ -58,4 +51,4 @@ const LandingScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
   );
 };
 
-export default connector(LandingScreen);
+export default LandingScreen;

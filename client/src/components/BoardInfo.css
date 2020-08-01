@@ -1,0 +1,13 @@
+#board-info-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+#red-team-score {
+  color: #ff3a30;
+}
+#blue-team-score {
+  color: #007bff;
+}

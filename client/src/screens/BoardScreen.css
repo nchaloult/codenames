@@ -1,0 +1,9 @@
+#board-screen-card {
+  display: flex;
+}
+#small-col {
+  flex: 1 1 0px;
+}
+#big-col {
+  flex: 2 1 0px;
+}
