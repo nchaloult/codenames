@@ -1,7 +1,13 @@
-import { UserState, UserActionTypes, SET_DISPLAY_NAME } from './types';
+import {
+  UserState,
+  UserActionTypes,
+  SET_DISPLAY_NAME,
+  SET_IS_SETTING_DISPLAY_NAME,
+} from './types';
 
 const initialState: UserState = {
   displayName: '',
+  isSettingDisplayName: true,
 };
 
 export default function userReducer(
@@ -13,6 +19,11 @@ export default function userReducer(
       return {
         ...state,
         displayName: action.payload,
+      };
+    case SET_IS_SETTING_DISPLAY_NAME:
+      return {
+        ...state,
+        isSettingDisplayName: action.payload,
       };
     default:
       return state;

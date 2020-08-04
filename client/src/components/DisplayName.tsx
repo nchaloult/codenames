@@ -7,21 +7,35 @@ import React from 'react';
 import './DisplayName.css';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../store';
+import { setIsSettingDisplayName } from '../store/user/actions';
 
 // Redux business.
+
 const mapState = (state: RootState) => ({
   displayName: state.user.displayName,
 });
-const connector = connect(mapState);
+const mapDispatch = {
+  setIsSettingDisplayName: (isSettingDisplayName: boolean) =>
+    setIsSettingDisplayName(isSettingDisplayName),
+};
+const connector = connect(mapState, mapDispatch);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 // Component.
 
 const DisplayName: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
   return (
-    <p>
-      Display name: <span id="emph-display-name">{props.displayName}</span>
-    </p>
+    <div id="display-name-container">
+      <p>
+        Display name: <span id="emph-display-name">{props.displayName}</span>
+      </p>
+      <button
+        className="secondary-btn"
+        type="button"
+        onClick={() => props.setIsSettingDisplayName(true)}>
+        Change Display Name
+      </button>
+    </div>
   );
 };
 
