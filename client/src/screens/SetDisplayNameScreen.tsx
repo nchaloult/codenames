@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../store';
-import setDisplayName from '../store/user/actions';
+import { setDisplayName, setIsSettingDisplayName } from '../store/user/actions';
 
 // Redux business.
 
 const mapState = (state: RootState) => ({
   displayName: state.user.displayName,
+  isSettingDisplayName: state.user.isSettingDisplayName,
 });
 const mapDispatch = {
   setDisplayName: (displayName: string) => setDisplayName(displayName),
+  setIsSettingDisplayName: (isSettingDisplayName: boolean) =>
+    setIsSettingDisplayName(isSettingDisplayName),
 };
 const connector = connect(mapState, mapDispatch);
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -24,6 +27,7 @@ const SetDisplayNameScreen: React.FC<PropsFromRedux> = (
   const handleDisplayNameFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     props.setDisplayName(newDisplayName);
+    props.setIsSettingDisplayName(false);
   };
 
   return (
