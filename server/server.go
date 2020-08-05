@@ -57,13 +57,6 @@ func (s *Server) Start() {
 		os.Exit(0)
 	}()
 
-	// Serve the static files from the production build of our web front-end.
-	//
-	// A directory named "front-end" doesn't exist in this repo, but one does
-	// exist in the container that we deploy to production. See this repo's
-	// Dockerfile.
-	http.Handle("/", http.FileServer(http.Dir("./front-end")))
-
 	// Register routes with their corresponding handler funcs.
 	http.HandleFunc("/api/hello", s.helloHandler)
 
