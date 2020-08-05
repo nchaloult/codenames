@@ -65,15 +65,6 @@ func (s *Server) Start() {
 	// Register routes with their corresponding handler funcs.
 	router.HandleFunc("/api/hello", s.helloHandler).Methods("GET")
 
-	// Serve the static files from the production build of our web front-end.
-	//
-	// A directory named "front-end" doesn't exist in this repo, but one does
-	// exist in the container that we deploy to production. See this repo's
-	// Dockerfile.
-	spa := spaHandler{staticPath: "front-end", indexPath: "index.html"}
-	router.PathPrefix("/").Handler(spa)
-	// http.Handle("/", http.FileServer(http.Dir("./front-end")))
-
 	// Stand up the server.
 	log.Printf("Listening on port %d....\n", s.port)
 	portAddr := fmt.Sprintf(":%d", s.port)
