@@ -21,7 +21,7 @@ The following steps are reminders for myself more than anything. If you'd like t
 
 ### Server
 
-The server is "containerized," so you may deploy it through whichever cloud service provider that you're comfortable with, pretty much. I've chosen Heroku because of it's great free-tier plan.
+The server is "containerized," so you may deploy it through whichever cloud service provider that you're comfortable with, pretty much. I've chosen Heroku because of its great free-tier plan.
 
 If you'd like, you may test out how your changes to the server behave in a production environment by running:
 
