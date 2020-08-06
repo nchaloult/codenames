@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/gorilla/mux"
 )
 
 const (
@@ -57,13 +59,15 @@ func (s *Server) Start() {
 		os.Exit(0)
 	}()
 
+	router := mux.NewRouter()
+
 	// Register routes with their corresponding handler funcs.
-	http.HandleFunc("/api/hello", s.helloHandler)
+	router.HandleFunc("/api/hello", s.helloHandler).Methods("GET")
 
 	// Stand up the server.
 	log.Printf("Listening on port %d....\n", s.port)
 	portAddr := fmt.Sprintf(":%d", s.port)
-	log.Fatal(http.ListenAndServe(portAddr, nil))
+	log.Fatal(http.ListenAndServe(portAddr, router))
 }
 
 // helloHandler serves requests at the /api/hello route. Responds with a
