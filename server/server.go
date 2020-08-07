@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/gorilla/mux"
+	"github.com/nchaloult/codenames/realtime"
 )
 
 const (
@@ -22,6 +23,10 @@ const (
 type Server struct {
 	// port is the port number that an HTTP server will listen for requests on.
 	port int
+
+	// activeGames stores pointers to Interactors for all ongoing games that the
+	// server is handling.
+	activeGames map[string]*realtime.Interactor
 }
 
 // NewServer returns a pointer to a new Server object that's configured with the
@@ -36,7 +41,8 @@ func NewServer(port int) (*Server, error) {
 	}
 
 	return &Server{
-		port,
+		port:        port,
+		activeGames: make(map[string]*realtime.Interactor, 0),
 	}, nil
 }
 
