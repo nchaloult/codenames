@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -68,7 +69,7 @@ func (s *Server) Start() {
 	router := mux.NewRouter()
 
 	// Register routes with their corresponding handler funcs.
-	router.HandleFunc("/api/hello", s.helloHandler).Methods("GET")
+	router.HandleFunc("/health", s.healthHandler).Methods("GET")
 
 	// Stand up the server.
 	log.Printf("Listening on port %d....\n", s.port)
@@ -76,8 +77,22 @@ func (s *Server) Start() {
 	log.Fatal(http.ListenAndServe(portAddr, router))
 }
 
-// helloHandler serves requests at the /api/hello route. Responds with a
-// greeting as plain text.
-func (s *Server) helloHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "hello world!")
+// healthHandler serves requests at the /health route. Responds with information
+// about the server's state.
+//
+// TODO: include health information about the database in response.
+func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
+	response := map[string]interface{}{
+		"ok":             true,
+		"numActiveGames": len(s.activeGames),
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	err := json.NewEncoder(w).Encode(response)
+	if err != nil {
+		errCode := http.StatusInternalServerError
+		errMsg := fmt.Sprintf("Failed to encode response as JSON: %v\n", err)
+		http.Error(w, errMsg, errCode)
+		return
+	}
 }
