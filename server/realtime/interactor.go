@@ -21,7 +21,7 @@ import (
 // associated with, or responsible for, each Game.
 type Interactor struct {
 	Game    *model.Game
-	Players map[uuid.UUID]model.Player
+	Players map[uuid.UUID]*model.Player
 }
 
 // NewInteractor returns a pointer to a new Interactor object initialized with
@@ -29,6 +29,6 @@ type Interactor struct {
 func NewInteractor(game *model.Game) *Interactor {
 	return &Interactor{
 		Game:    game,
-		Players: make(map[uuid.UUID]model.Player, 0),
+		Players: make(map[uuid.UUID]*model.Player, 0),
 	}
 }
