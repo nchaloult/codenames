@@ -72,7 +72,7 @@ func (s *Server) Start() {
 
 	// Register routes with their corresponding handler funcs.
 	router.HandleFunc("/health", s.healthHandler).Methods("GET")
-	router.HandleFunc("/ws", s.wsHandler).Methods(http.MethodPost)
+	router.HandleFunc("/ws", s.wsHandler)
 
 	// Stand up the server.
 	log.Printf("Listening on port %d....\n", s.port)
@@ -107,28 +107,36 @@ type wsRequestBody struct {
 	displayName string
 }
 
-// wsHandler serves POST requests at the /ws route. Creates a new game (or adds
-// a new player to the existing game that corresponds with the provided gameID),
-// and attempts to establish a Websocket connection with a client.
+// wsHandler serves requests at the /ws route. Creates a new game (or adds a new
+// player to the existing game that corresponds with the provided gameID), and
+// attempts to establish a Websocket connection with a client. Expects "gameID"
+// and "displayName" as query parameters when the /ws endpoint is hit.
 func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
-	// Extract info from request body.
-	var reqBody wsRequestBody
-	err := json.NewDecoder(r.Body).Decode(&reqBody)
-	if err != nil {
-		errMsg := fmt.Sprintf("failed to decode request body: %v", err)
+	// Extract info from query params.
+	// TODO: introduce error handling if
+	queryParams := r.URL.Query()
+	if _, ok := queryParams["gameID"]; !ok {
+		errMsg := fmt.Sprint("the \"gameID\" query param is required")
 		http.Error(w, errMsg, http.StatusBadRequest)
 		return
 	}
+	gameID := queryParams["gameID"][0]
+	if _, ok := queryParams["displayName"]; !ok {
+		errMsg := fmt.Sprint("the \"displayName\" query param is required")
+		http.Error(w, errMsg, http.StatusBadRequest)
+		return
+	}
+	displayName := queryParams["displayName"][0]
 
 	// Look for an active game associated with the provided gameID. If one
 	// doesn't exist, then create a new one.
-	if _, ok := s.activeGames[reqBody.gameID]; !ok {
+	if _, ok := s.activeGames[gameID]; !ok {
 		// TODO: Write function somewhere in model package to randomly generate
 		// a dictionary. For now, I'm just using a dummy/stubbed one.
 		dictionary := [25]string{"foo", "bar", "baz"}
 		newGame := model.NewGame(dictionary)
 		newInteractor := realtime.NewInteractor(newGame)
-		s.activeGames[reqBody.gameID] = newInteractor
+		s.activeGames[gameID] = newInteractor
 	}
 
 	// Attempt to establish a websocket connection with the client.
@@ -142,6 +150,6 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create a new player for our connected client.
-	newPlayer := model.NewPlayer(conn, reqBody.displayName)
-	s.activeGames[reqBody.gameID].Players[newPlayer.DisplayName] = newPlayer
+	newPlayer := model.NewPlayer(conn, displayName)
+	s.activeGames[gameID].Players[newPlayer.DisplayName] = newPlayer
 }
