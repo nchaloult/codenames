@@ -71,7 +71,7 @@ func (s *Server) Start() {
 	router := mux.NewRouter()
 
 	// Register routes with their corresponding handler funcs.
-	router.HandleFunc("/health", s.healthHandler).Methods("GET")
+	router.HandleFunc("/health", s.healthHandler).Methods(http.MethodGet)
 	router.HandleFunc("/ws", s.wsHandler)
 
 	// Stand up the server.
