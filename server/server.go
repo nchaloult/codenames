@@ -9,7 +9,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/nchaloult/codenames/model"
@@ -116,7 +115,8 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	var reqBody wsRequestBody
 	err := json.NewDecoder(r.Body).Decode(&reqBody)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		errMsg := fmt.Sprintf("failed to decode request body: %v", err)
+		http.Error(w, errMsg, http.StatusBadRequest)
 		return
 	}
 
@@ -131,7 +131,7 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 		s.activeGames[reqBody.gameID] = newInteractor
 	}
 
-	// Attempt to establish a websocket connection with the server.
+	// Attempt to establish a websocket connection with the client.
 	upgrader := websocket.Upgrader{}
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -143,19 +143,5 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Create a new player for our connected client.
 	newPlayer := model.NewPlayer(conn, reqBody.displayName)
-	newPlayerUUID := uuid.New()
-	s.activeGames[reqBody.gameID].Players[newPlayerUUID] = newPlayer
-
-	// Let the client know about the new UUID we just generated for it.
-	response := map[string]interface{}{
-		"uuid": newPlayerUUID,
-	}
-	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(response)
-	if err != nil {
-		errCode := http.StatusInternalServerError
-		errMsg := fmt.Sprintf("Failed to encode response as JSON: %v\n", err)
-		http.Error(w, errMsg, errCode)
-		return
-	}
+	s.activeGames[reqBody.gameID].Players[newPlayer.DisplayName] = newPlayer
 }
