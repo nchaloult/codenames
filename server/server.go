@@ -28,7 +28,7 @@ type Server struct {
 	port int
 
 	// activeGames stores pointers to Interactors for all ongoing games that the
-	// server is handling.
+	// server is handling, indexed by gameIDs.
 	activeGames map[string]*realtime.Interactor
 }
 
@@ -113,7 +113,6 @@ type wsRequestBody struct {
 // and "displayName" as query parameters when the /ws endpoint is hit.
 func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract info from query params.
-	// TODO: introduce error handling if
 	queryParams := r.URL.Query()
 	if _, ok := queryParams["gameID"]; !ok {
 		errMsg := fmt.Sprint("the \"gameID\" query param is required")
