@@ -1,3 +1,6 @@
+// Users are different from Players (in lobby/types.ts): the User is the current
+// client, while Players are all other clients that are participating in the
+// same game, or are in the same game lobby.
 export interface UserState {
   displayName: string;
   isSettingDisplayName: boolean;
