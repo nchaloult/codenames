@@ -110,7 +110,7 @@ type wsRequestBody struct {
 // wsHandler serves requests at the /ws route. Creates a new game (or adds a new
 // player to the existing game that corresponds with the provided gameID), and
 // attempts to establish a Websocket connection with a client. Expects "gameID"
-// and "displayName" as query parameters when the /ws endpoint is hit.
+// as a query parameter when the /ws endpoint is hit.
 func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract info from query params.
 	queryParams := r.URL.Query()
@@ -120,12 +120,6 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	gameID := queryParams["gameID"][0]
-	if _, ok := queryParams["displayName"]; !ok {
-		errMsg := fmt.Sprint("the \"displayName\" query param is required")
-		http.Error(w, errMsg, http.StatusBadRequest)
-		return
-	}
-	displayName := queryParams["displayName"][0]
 
 	// Look for an active game associated with the provided gameID. If one
 	// doesn't exist, then create a new one.
@@ -149,6 +143,9 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create a new player for our connected client.
-	newPlayer := model.NewPlayer(conn, displayName)
+	// TODO: make this async by pushing this newPlayer pointer to some channel.
+	// This will break if more than one client hits the /ws endpoint at once
+	// with the same gameID.
+	newPlayer := model.NewPlayer(conn)
 	s.activeGames[gameID].Players[newPlayer.DisplayName] = newPlayer
 }
