@@ -3,9 +3,11 @@ import {
   UserActionTypes,
   SET_DISPLAY_NAME,
   SET_IS_SETTING_DISPLAY_NAME,
+  SET_USER_ID,
 } from './types';
 
 const initialState: UserState = {
+  id: '',
   displayName: '',
   isSettingDisplayName: true,
 };
@@ -15,6 +17,11 @@ export default function userReducer(
   action: UserActionTypes,
 ): UserState {
   switch (action.type) {
+    case SET_USER_ID:
+      return {
+        ...state,
+        id: action.payload,
+      };
     case SET_DISPLAY_NAME:
       return {
         ...state,
