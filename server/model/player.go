@@ -26,6 +26,7 @@ func NewPlayer(conn *websocket.Conn) *Player {
 		"id": id,
 	}
 	conn.WriteJSON(playerIDMsg)
+
 	return &Player{
 		Conn:        conn,
 		ID:          id.String(),

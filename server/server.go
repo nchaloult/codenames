@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
@@ -16,8 +17,10 @@ import (
 )
 
 const (
-	minPort = 1025
-	maxPort = 65535
+	minPort       = 1025
+	maxPort       = 65535
+	devClientURL  = "localhost:3000"
+	prodClientURL = "foobar.com" // TODO: change this once you deploy front-end.
 )
 
 // Server exposes HTTP API endpoints that let clients mutate and interact with
@@ -132,8 +135,13 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 		s.activeGames[gameID] = newInteractor
 	}
 
-	// Attempt to establish a websocket connection with the client.
 	upgrader := websocket.Upgrader{}
+	// Set up upgrader to only accept connections from a few specified origins.
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return s.checkClientOrigin(r)
+	}
+
+	// Attempt to establish a websocket connection with the client.
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		errMsg := fmt.Sprintf("failed to upgrade to a websocket connection: %v",
@@ -148,4 +156,23 @@ func (s *Server) wsHandler(w http.ResponseWriter, r *http.Request) {
 	// with the same gameID.
 	newPlayer := model.NewPlayer(conn)
 	s.activeGames[gameID].Players[newPlayer.DisplayName] = newPlayer
+}
+
+// checkClientOrigin makes sure that the client application that's trying to
+// establish a websocket connection with us is someone we recognize: either the
+// client's origin in development (localhost:some-port) or the client's
+// production URL.
+func (s *Server) checkClientOrigin(r *http.Request) bool {
+	origin := r.Header["Origin"]
+	if len(origin) == 0 {
+		return true
+	}
+
+	u, err := url.Parse(origin[0])
+	if err != nil {
+		return false
+	}
+
+	// TODO: move these two whitelisted URLs to env vars, maybe?
+	return u.Host == devClientURL || u.Host == prodClientURL
 }
