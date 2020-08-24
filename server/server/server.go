@@ -52,6 +52,12 @@ func NewServer(port int) (*Server, error) {
 	}, nil
 }
 
+// routeHandler describes objects which handle requests to specific HTTP
+// endpoints.
+type routeHandler interface {
+	RegisterRoutes(*mux.Router)
+}
+
 // Start registers all of the HTTP handler funcs with their corresponding routes
 // and begins listening for new requests that come in on those routes.
 func (s *Server) Start() {
