@@ -17,13 +17,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 // Component.
 
-interface ComponentProps {
-  temp: string;
-}
-
-type Props = PropsFromRedux & ComponentProps;
-
-const CreateGameScreen: React.FC<Props> = (props: Props) => {
+const CreateGameScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
   if (props.isSettingDisplayName) {
     return <SetDisplayNameScreen />;
   }
@@ -34,7 +28,6 @@ const CreateGameScreen: React.FC<Props> = (props: Props) => {
           <div>
             <h1>Create a New Game</h1>
             <h3>{props.gameID.toUpperCase()}</h3>
-            <h4>{props.temp}</h4>
             <DisplayName />
             <button className="secondary-btn" type="button">
               Join Red Team

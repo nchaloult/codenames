@@ -38,7 +38,6 @@ type Props = PropsFromRedux & RouteComponentProps<any>;
 
 const GameScreen: React.FC<Props> = (props: Props) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [temporary, setTemporary] = useState('placeholder');
 
   useEffect(() => {
     const gameIDFromURL: string = props.match.params.gameID;
@@ -49,11 +48,6 @@ const GameScreen: React.FC<Props> = (props: Props) => {
     const socketURL = `${protocol}${SERVER_URL}/ws?gameID=${gameIDFromURL}`;
     const socket = new WebSocket(socketURL);
     socket.onopen = () => setSocket(socket);
-
-    // Temporary!
-    // TODO: remove this! Just testing to see if I can send messages between a
-    // client and the server through a Websocket.
-    socket.onmessage = (event) => setTemporary(JSON.parse(event.data).id);
 
     // For now, just stub this out & pretend that the server told us that a game
     // with the provided ID doesn't exist, therefore we'll be creating a new
@@ -81,7 +75,7 @@ const GameScreen: React.FC<Props> = (props: Props) => {
   if (props.isCreated) {
     return <JoinGameScreen />;
   }
-  return <CreateGameScreen temp={temporary} />;
+  return <CreateGameScreen />;
 };
 
 export default connector(GameScreen);
