@@ -52,15 +52,15 @@ func NewServer(port int) (*Server, error) {
 	}, nil
 }
 
-// routeHandler describes objects which handle requests to specific HTTP
+// RouteHandler describes objects which handle requests to specific HTTP
 // endpoints.
-type routeHandler interface {
+type RouteHandler interface {
 	RegisterRoutes(*mux.Router)
 }
 
 // Start registers all of the HTTP handler funcs with their corresponding routes
 // and begins listening for new requests that come in on those routes.
-func (s *Server) Start() {
+func (s *Server) Start(handlers []RouteHandler) {
 	// Listen for OS interrupts (like if someone presses Ctrl+C or something).
 	// Spin down gracefully if this process is interrupted.
 	sigintChan := make(chan os.Signal, 1)
@@ -82,6 +82,9 @@ func (s *Server) Start() {
 	// Register routes with their corresponding handler funcs.
 	router.HandleFunc("/health", s.healthHandler).Methods(http.MethodGet)
 	router.HandleFunc("/ws", s.wsHandler)
+	for _, handler := range handlers {
+		handler.RegisterRoutes(router)
+	}
 
 	// Stand up the server.
 	log.Printf("Listening on port %d....\n", s.port)

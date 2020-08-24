@@ -22,9 +22,11 @@ func main() {
 		port = defaultPort
 	}
 
-	server, err := server.NewServer(port)
+	s, err := server.NewServer(port)
 	if err != nil {
 		log.Fatalf("Failed to create new Server object: %v\n", err)
 	}
-	server.Start()
+	s.Start([]server.RouteHandler{
+		server.NewWSHandler(),
+	})
 }
