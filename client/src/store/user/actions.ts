@@ -2,7 +2,16 @@ import {
   UserActionTypes,
   SET_DISPLAY_NAME,
   SET_IS_SETTING_DISPLAY_NAME,
+  SET_USER_ID,
 } from './types';
+
+// Action creator for the SET_USER_ID action type.
+export function setUserID(id: string): UserActionTypes {
+  return {
+    type: SET_USER_ID,
+    payload: id,
+  };
+}
 
 // Action creator for the SET_DISPLAY_NAME action type.
 export function setDisplayName(displayName: string): UserActionTypes {
