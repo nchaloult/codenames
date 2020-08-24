@@ -27,6 +27,6 @@ func main() {
 		log.Fatalf("Failed to create new Server object: %v\n", err)
 	}
 	s.Start([]server.RouteHandler{
-		server.NewWSHandler(),
+		server.NewWSHandler(s),
 	})
 }
