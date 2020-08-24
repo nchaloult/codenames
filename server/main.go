@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/nchaloult/codenames/server"
 )
 
 const defaultPort = 6969
@@ -20,7 +22,7 @@ func main() {
 		port = defaultPort
 	}
 
-	server, err := NewServer(port)
+	server, err := server.NewServer(port)
 	if err != nil {
 		log.Fatalf("Failed to create new Server object: %v\n", err)
 	}
