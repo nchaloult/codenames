@@ -1,29 +1,20 @@
 package server
 
 import (
-	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/gorilla/mux"
 	"github.com/nchaloult/codenames/realtime"
-)
-
-const (
-	minPort = 1025
-	maxPort = 65535
+	"github.com/nchaloult/codenames/server/handlers"
 )
 
 // Server exposes HTTP API endpoints that let clients mutate and interact with
 // a Game's state, serves the static files for the web front-end, and maintains
 // a collection of active Games in memory.
 type Server struct {
-	// port is the port number that an HTTP server will listen for requests on.
-	port int
-
 	// activeGames stores pointers to Interactors for all ongoing games that the
 	// server is handling, indexed by gameIDs.
 	activeGames map[string]*realtime.Interactor
@@ -31,30 +22,14 @@ type Server struct {
 
 // NewServer returns a pointer to a new Server object that's configured with the
 // provided port number.
-func NewServer(port int) (*Server, error) {
-	if port < minPort || port > maxPort {
-		return nil, fmt.Errorf(
-			"the provided port must be within the range: [%d, %d]",
-			minPort,
-			maxPort,
-		)
-	}
-
+func NewServer() *Server {
 	return &Server{
-		port:        port,
 		activeGames: make(map[string]*realtime.Interactor, 0),
-	}, nil
+	}
 }
 
-// RouteHandler describes objects which handle requests to specific HTTP
-// endpoints.
-type RouteHandler interface {
-	RegisterRoutes(*mux.Router)
-}
-
-// Start registers all of the HTTP handler funcs with their corresponding routes
-// and begins listening for new requests that come in on those routes.
-func (s *Server) Start(handlers []RouteHandler) {
+// Start spins up all of the Server's goroutines and brings everything online.
+func (s *Server) Start(port int) error {
 	// Listen for OS interrupts (like if someone presses Ctrl+C or something).
 	// Spin down gracefully if this process is interrupted.
 	sigintChan := make(chan os.Signal, 1)
@@ -71,15 +46,16 @@ func (s *Server) Start(handlers []RouteHandler) {
 		os.Exit(0)
 	}()
 
+	// Set up HTTP handlers.
 	router := mux.NewRouter()
-
-	// Register routes with their corresponding handler funcs.
-	for _, handler := range handlers {
-		handler.RegisterRoutes(router)
+	handler, err := handlers.NewHandler(router, port)
+	if err != nil {
+		return err
 	}
+	go handler.ListenOnEndpoints([]handlers.RouteHandler{
+		NewHealthHandler(s),
+		NewWSHandler(s),
+	})
 
-	// Stand up the server.
-	log.Printf("Listening on port %d....\n", s.port)
-	portAddr := fmt.Sprintf(":%d", s.port)
-	log.Fatal(http.ListenAndServe(portAddr, router))
+	return nil
 }
