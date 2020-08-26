@@ -1,4 +1,4 @@
-package server
+package api
 
 import (
 	"fmt"
@@ -19,13 +19,13 @@ const (
 // WSHandler handles requests to do with opening or managing Websocket
 // connections (any /ws/* endpoints).
 type WSHandler struct {
-	server *Server
+	manager *realtime.Manager
 }
 
 // NewWSHandler returns a pointer to a new WSHandler initialized with the
 // provided fields.
-func NewWSHandler(server *Server) *WSHandler {
-	return &WSHandler{server}
+func NewWSHandler(manager *realtime.Manager) *WSHandler {
+	return &WSHandler{manager}
 }
 
 // checkClientOrigin makes sure that the client application that's trying to
@@ -63,13 +63,13 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Look for an active game associated with the provided gameID. If one
 	// doesn't exist, then create a new one.
-	if _, ok := h.server.activeGames[gameID]; !ok {
+	if _, ok := h.manager.ActiveGames[gameID]; !ok {
 		// TODO: Write function somewhere in model package to randomly generate
 		// a dictionary. For now, I'm just using a dummy/stubbed one.
 		dictionary := [25]string{"foo", "bar", "baz"}
 		newGame := model.NewGame(dictionary)
 		newInteractor := realtime.NewInteractor(newGame)
-		h.server.activeGames[gameID] = newInteractor
+		h.manager.ActiveGames[gameID] = newInteractor
 	}
 
 	upgrader := websocket.Upgrader{}
@@ -92,7 +92,7 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 	// This will break if more than one client hits the /ws endpoint at once
 	// with the same gameID.
 	newPlayer := model.NewPlayer(conn)
-	h.server.activeGames[gameID].Players[newPlayer.DisplayName] = newPlayer
+	h.manager.ActiveGames[gameID].Players[newPlayer.DisplayName] = newPlayer
 }
 
 // RegisterRoutes registers handlers for all of the routes that wsHandler

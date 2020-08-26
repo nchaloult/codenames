@@ -1,4 +1,4 @@
-package handlers
+package api
 
 import (
 	"fmt"
@@ -19,15 +19,15 @@ type RouteHandler interface {
 	RegisterRoutes(*mux.Router)
 }
 
-// Handler sets up handlers for HTTP endpoints, and spins up an HTTP server.
-type Handler struct {
+// API sets up handlers for HTTP endpoints, and spins up an HTTP server.
+type API struct {
 	router *mux.Router
 	port   int
 }
 
-// NewHandler returns a pointer to a new Handler object initialized with the
-// provided pointer to router.
-func NewHandler(router *mux.Router, port int) (*Handler, error) {
+// NewAPI returns a pointer to a new API object initialized with the provided
+// pointer to router and port number to listen on.
+func NewAPI(router *mux.Router, port int) (*API, error) {
 	if port < minPort || port > maxPort {
 		return nil, fmt.Errorf(
 			"the provided port must be within the range: [%d, %d]",
@@ -36,20 +36,20 @@ func NewHandler(router *mux.Router, port int) (*Handler, error) {
 		)
 	}
 
-	return &Handler{router, port}, nil
+	return &API{router, port}, nil
 }
 
 // ListenOnEndpoints registers all of the HTTP handler funcs with their
 // corresponding routes and begins listening for new requests that come in on
 // those routes.
-func (h *Handler) ListenOnEndpoints(handlers []RouteHandler) {
+func (a *API) ListenOnEndpoints(handlers []RouteHandler) {
 	// Register routes with their corresponding handler funcs.
 	for _, handler := range handlers {
-		handler.RegisterRoutes(h.router)
+		handler.RegisterRoutes(a.router)
 	}
 
 	// Start accepting requests on those routes.
-	log.Printf("Listening on port %d....\n", h.port)
-	portAddr := fmt.Sprintf(":%d", h.port)
-	log.Fatal(http.ListenAndServe(portAddr, h.router))
+	log.Printf("Listening on port %d....\n", a.port)
+	portAddr := fmt.Sprintf(":%d", a.port)
+	log.Fatal(http.ListenAndServe(portAddr, a.router))
 }

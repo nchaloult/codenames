@@ -1,4 +1,4 @@
-package server
+package api
 
 import (
 	"encoding/json"
@@ -6,18 +6,19 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/nchaloult/codenames/realtime"
 )
 
 // HealthHandler handles requests to endpoints that respond with information
 // about the server's current state and status.
 type HealthHandler struct {
-	server *Server
+	manager *realtime.Manager
 }
 
 // NewHealthHandler returns a pointer to a new HealthHandler initialized with
 // the provided fields.
-func NewHealthHandler(server *Server) *HealthHandler {
-	return &HealthHandler{server}
+func NewHealthHandler(manager *realtime.Manager) *HealthHandler {
+	return &HealthHandler{manager}
 }
 
 // healthHandler serves requests at the /health route. Responds with information
@@ -27,7 +28,7 @@ func NewHealthHandler(server *Server) *HealthHandler {
 func (h *HealthHandler) healthHandler(w http.ResponseWriter, r *http.Request) {
 	response := map[string]interface{}{
 		"ok":             true,
-		"numActiveGames": len(h.server.activeGames),
+		"numActiveGames": len(h.manager.ActiveGames),
 	}
 
 	w.Header().Set("Content-Type", "application/json")
