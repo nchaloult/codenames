@@ -93,6 +93,8 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 	// with the same gameID.
 	newPlayer := realtime.NewPlayer(conn)
 	h.manager.ActiveGames[gameID].Players[newPlayer.DisplayName] = newPlayer
+
+	go newPlayer.ListenForEvents()
 }
 
 // RegisterRoutes registers handlers for all of the routes that wsHandler

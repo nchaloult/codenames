@@ -1,6 +1,9 @@
 package realtime
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
@@ -32,5 +35,36 @@ func NewPlayer(conn *websocket.Conn) *Player {
 		ID:          id.String(),
 		IsOnRedTeam: true,
 		IsSpymaster: false,
+	}
+}
+
+// ListenForEvents watches a Player's Websocket connection for messages from
+// their client, like if they click a button, for example.
+func (p *Player) ListenForEvents() {
+	defer func() {
+		// TODO: remove this Player from their Interactor's list of Players.
+		// Maybe push this Player's ID onto a channel or something.
+		p.Conn.Close()
+	}()
+
+	log.Printf("Player %s is listening for events...", p.ID)
+
+	for {
+		event := event{}
+		err := p.Conn.ReadJSON(&event)
+		if err != nil {
+			log.Printf("Player %s websocket unexpected error: %v", p.ID, err)
+			p.Conn.Close()
+			return
+		}
+
+		// Decide how to behave depending on the event's type/kind.
+		switch event.kind {
+		case changeDisplayName:
+			log.Printf("event received from Player %s to change their display name\n", p.ID)
+		default:
+			errMsg := fmt.Errorf("unrecognized eventKind: %v", event.kind)
+			constructAndSendErr(p.Conn, errMsg)
+		}
 	}
 }
