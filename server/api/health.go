@@ -1,8 +1,6 @@
 package api
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -30,15 +28,7 @@ func (h *HealthHandler) healthHandler(w http.ResponseWriter, r *http.Request) {
 		"ok":             true,
 		"numActiveGames": len(h.manager.ActiveGames),
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	err := json.NewEncoder(w).Encode(response)
-	if err != nil {
-		errCode := http.StatusInternalServerError
-		errMsg := fmt.Sprintf("Failed to encode response as JSON: %v\n", err)
-		http.Error(w, errMsg, errCode)
-		return
-	}
+	constructAndSendResponse(w, response)
 }
 
 // RegisterRoutes registers handlers for all of the routes that wsHandler
