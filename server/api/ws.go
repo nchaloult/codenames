@@ -55,7 +55,7 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract info from query params.
 	queryParams := r.URL.Query()
 	if _, ok := queryParams["gameID"]; !ok {
-		errMsg := fmt.Sprint("the \"gameID\" query param is required")
+		errMsg := "the \"gameID\" query param is required"
 		http.Error(w, errMsg, http.StatusBadRequest)
 		return
 	}
