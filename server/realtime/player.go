@@ -1,4 +1,4 @@
-package model
+package realtime
 
 import (
 	"github.com/google/uuid"

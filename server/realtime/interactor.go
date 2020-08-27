@@ -17,7 +17,7 @@ type Interactor struct {
 
 	// Players stores Player objects for each active client, indexed by their
 	// display name.
-	Players map[string]*model.Player
+	Players map[string]*Player
 }
 
 // NewInteractor returns a pointer to a new Interactor object initialized with
@@ -25,6 +25,6 @@ type Interactor struct {
 func NewInteractor(game *model.Game) *Interactor {
 	return &Interactor{
 		Game:    game,
-		Players: make(map[string]*model.Player, 0),
+		Players: make(map[string]*Player, 0),
 	}
 }
