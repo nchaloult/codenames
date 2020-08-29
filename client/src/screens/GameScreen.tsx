@@ -9,7 +9,7 @@ import BoardScreen from './BoardScreen';
 import JoinGameScreen from './JoinGameScreen';
 import { setUserID } from '../store/user/actions';
 import setSocket from '../store/websocket/actions';
-import establishWSConnection from '../realtime/ws';
+import { establishWSConnection } from '../realtime/ws';
 
 // In this component, a Websocket connection is established with the server.
 // Depending on whether the game with the provided gameID has already been
