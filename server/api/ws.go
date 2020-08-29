@@ -91,8 +91,10 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: make this async by pushing this newPlayer pointer to some channel.
 	// This will break if more than one client hits the /ws endpoint at once
 	// with the same gameID.
-	newPlayer := model.NewPlayer(conn)
+	newPlayer := realtime.NewPlayer(conn)
 	h.manager.ActiveGames[gameID].Players[newPlayer.DisplayName] = newPlayer
+
+	go newPlayer.ListenForEvents()
 }
 
 // RegisterRoutes registers handlers for all of the routes that wsHandler
