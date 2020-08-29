@@ -11,16 +11,16 @@ const (
 // event mirrors the structure of JSON messages that clients send to the server
 // via a Websocket connection.
 type event struct {
-	kind eventKind
-	body interface{}
+	Kind eventKind   `json:"kind"`
+	Body interface{} `json:"body"`
 }
 
 // eventResponse mirrors the structure of JSON messages that the server sends in
 // response to a client's Websocket message.
 type eventResponse struct {
-	ok   bool
-	kind eventKind
-	body interface{}
+	Ok   bool        `json:"ok"`
+	Kind eventKind   `json:"kind"`
+	Body interface{} `json:"body"`
 }
 
 // constructAndSendResponse builds an eventResponse struct with the provided
@@ -31,13 +31,13 @@ func constructAndSendResponse(
 	kind eventKind,
 	body interface{},
 ) {
-	response := eventResponse{ok: true, kind: kind, body: body}
+	response := eventResponse{Ok: true, Kind: kind, Body: body}
 	conn.WriteJSON(response)
 }
 
 // constructAndSendErr builds an eventResponse struct with the provided error,
 // marshals it to JSON, and sends it along the provided Websocket connection.
 func constructAndSendErr(conn *websocket.Conn, err error) {
-	response := eventResponse{ok: false, body: err}
+	response := eventResponse{Ok: false, Body: err}
 	conn.WriteJSON(response)
 }

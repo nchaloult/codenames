@@ -47,7 +47,7 @@ const GameScreen: React.FC<Props> = (props: Props) => {
     const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
     const socketURL = `${protocol}${SERVER_URL}/ws?gameID=${gameIDFromURL}`;
     const socket = new WebSocket(socketURL);
-    socket.onopen = () => setSocket(socket);
+    socket.onopen = () => props.setSocket(socket);
 
     // For now, just stub this out & pretend that the server told us that a game
     // with the provided ID doesn't exist, therefore we'll be creating a new

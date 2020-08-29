@@ -8,6 +8,7 @@ import { setDisplayName, setIsSettingDisplayName } from '../store/user/actions';
 const mapState = (state: RootState) => ({
   displayName: state.user.displayName,
   isSettingDisplayName: state.user.isSettingDisplayName,
+  socket: state.websocket.socket,
 });
 const mapDispatch = {
   setDisplayName: (displayName: string) => setDisplayName(displayName),
@@ -26,6 +27,14 @@ const SetDisplayNameScreen: React.FC<PropsFromRedux> = (
 
   const handleDisplayNameFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Send a "change display name" event to the server.
+    const changeDisplayNameEvent = {
+      kind: 'changeDisplayName',
+      body: newDisplayName,
+    };
+    props.socket?.send(JSON.stringify(changeDisplayNameEvent));
+
     props.setDisplayName(newDisplayName);
     props.setIsSettingDisplayName(false);
   };
