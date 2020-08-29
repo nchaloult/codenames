@@ -55,6 +55,7 @@ func (p *Player) ListenForEvents() {
 		if err != nil {
 			log.Printf("Player %s websocket unexpected error: %v", p.ID, err)
 			p.Conn.Close()
+			// TODO: remove this Player from their Interactor.
 			return
 		}
 
