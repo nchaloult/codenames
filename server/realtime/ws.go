@@ -25,13 +25,16 @@ type eventResponse struct {
 
 // constructAndSendResponse builds an eventResponse struct with the provided
 // fields, marshals it to JSON, and sends it along the provided Websocket
-// connection.
+// connection. Body parameter may be nil.
 func constructAndSendResponse(
 	conn *websocket.Conn,
 	kind eventKind,
 	body interface{},
 ) {
-	response := eventResponse{Ok: true, Kind: kind, Body: body}
+	response := eventResponse{Ok: true, Kind: kind}
+	if body != nil {
+		response.Body = body
+	}
 	conn.WriteJSON(response)
 }
 
