@@ -61,7 +61,7 @@ func (p *Player) ListenForEvents() {
 		// Decide how to behave depending on the event's type/kind.
 		switch event.Kind {
 		case changeDisplayName:
-			log.Printf("event received from Player %s to change their display name\n", p.ID)
+			p.DisplayName = event.Body.(string)
 		default:
 			errMsg := fmt.Errorf("unrecognized eventKind: %v", event.Kind)
 			constructAndSendErr(p.Conn, errMsg)
