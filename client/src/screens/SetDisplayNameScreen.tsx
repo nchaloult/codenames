@@ -33,10 +33,27 @@ const SetDisplayNameScreen: React.FC<PropsFromRedux> = (
       kind: 'changeDisplayName',
       body: newDisplayName,
     };
-    props.socket?.send(JSON.stringify(changeDisplayNameEvent));
+    if (props.socket) {
+      props.socket.send(JSON.stringify(changeDisplayNameEvent));
+      // Listen for an acknowledgement from the server.
+      props.socket.onmessage = (f) => {
+        const eventResponse = JSON.parse(f.data);
+        if (!eventResponse.ok) {
+          // TODO: better error handling
+          alert('Attempt to change display name failed on the server side.');
+          return;
+        }
 
-    props.setDisplayName(newDisplayName);
-    props.setIsSettingDisplayName(false);
+        props.setDisplayName(newDisplayName);
+        props.setIsSettingDisplayName(false);
+      };
+    } else {
+      // TODO: better error handling
+      alert(
+        'Websocket var is undefined in Redux global store.' +
+          ' Cannot communicate with the server',
+      );
+    }
   };
 
   return (

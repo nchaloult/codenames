@@ -62,6 +62,7 @@ func (p *Player) ListenForEvents() {
 		switch event.Kind {
 		case changeDisplayName:
 			p.DisplayName = event.Body.(string)
+			constructAndSendResponse(p.Conn, changeDisplayName, nil)
 		default:
 			errMsg := fmt.Errorf("unrecognized eventKind: %v", event.Kind)
 			constructAndSendErr(p.Conn, errMsg)
