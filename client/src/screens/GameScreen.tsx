@@ -9,7 +9,7 @@ import BoardScreen from './BoardScreen';
 import JoinGameScreen from './JoinGameScreen';
 import { setUserID } from '../store/user/actions';
 import setSocket from '../store/websocket/actions';
-import { SERVER_URL } from '../constants';
+import establishWSConnection from '../realtime/ws';
 
 // In this component, a Websocket connection is established with the server.
 // Depending on whether the game with the provided gameID has already been
@@ -44,10 +44,8 @@ const GameScreen: React.FC<Props> = (props: Props) => {
     props.setGameID(gameIDFromURL);
 
     // Establish a Websocket connection with the server.
-    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    const socketURL = `${protocol}${SERVER_URL}/ws?gameID=${gameIDFromURL}`;
-    const socket = new WebSocket(socketURL);
-    socket.onopen = () => props.setSocket(socket);
+    const socket = establishWSConnection(gameIDFromURL);
+    props.setSocket(socket);
 
     // For now, just stub this out & pretend that the server told us that a game
     // with the provided ID doesn't exist, therefore we'll be creating a new
