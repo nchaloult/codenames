@@ -5,7 +5,7 @@ import "github.com/gorilla/websocket"
 type eventKind string
 
 const (
-	changeDisplayName eventKind = "changeDisplayName"
+	changeDisplayName eventKind = "CHANGE_DISPLAY_NAME"
 )
 
 // event mirrors the structure of JSON messages that clients send to the server
