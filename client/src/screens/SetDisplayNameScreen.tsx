@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../store';
 import { setDisplayName, setIsSettingDisplayName } from '../store/user/actions';
+import {
+  constructAndSendEvent,
+  EventKind,
+  isResponseOK,
+  getResponseErr,
+} from '../realtime/ws';
 
 // Redux business.
 
@@ -27,33 +33,35 @@ const SetDisplayNameScreen: React.FC<PropsFromRedux> = (
 
   const handleDisplayNameFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!props.socket) {
+      // TODO: redirect to some /error route or something to indicate a
+      // connection issue.
+      return;
+    }
 
     // Send a "change display name" event to the server.
-    const changeDisplayNameEvent = {
-      kind: 'changeDisplayName',
-      body: newDisplayName,
-    };
-    if (props.socket) {
-      props.socket.send(JSON.stringify(changeDisplayNameEvent));
-      // Listen for an acknowledgement from the server.
-      props.socket.onmessage = (f) => {
-        const eventResponse = JSON.parse(f.data);
-        if (!eventResponse.ok) {
+    constructAndSendEvent(
+      props.socket,
+      EventKind.ChangeDisplayName,
+      newDisplayName,
+    );
+    // Listen for an acknowledgement from the server.
+    props.socket.onmessage = (event) => {
+      const eventResponse = JSON.parse(event.data);
+      if (!isResponseOK(eventResponse)) {
+        const err = getResponseErr(eventResponse);
+        if (err) {
           // TODO: better error handling
-          alert('Attempt to change display name failed on the server side.');
-          return;
+          console.error(err);
         }
+        return;
+      }
 
-        props.setDisplayName(newDisplayName);
-        props.setIsSettingDisplayName(false);
-      };
-    } else {
-      // TODO: better error handling
-      alert(
-        'Websocket var is undefined in Redux global store.' +
-          ' Cannot communicate with the server',
-      );
-    }
+      // Response from the server looked good. Commit the display name change
+      // client-side.
+      props.setDisplayName(newDisplayName);
+      props.setIsSettingDisplayName(false);
+    };
   };
 
   return (
