@@ -42,7 +42,7 @@ const SetDisplayNameScreen: React.FC<PropsFromRedux> = (
     // Send a "change display name" event to the server.
     constructAndSendEvent(
       props.socket,
-      EventKind.ChangeDisplayName,
+      EventKind.changeDisplayName,
       newDisplayName,
     );
     // Listen for an acknowledgement from the server.

@@ -17,7 +17,7 @@ export function establishWSConnection(gameID: string): WebSocket {
 }
 
 export enum EventKind {
-  ChangeDisplayName = 'ChangeDisplayName',
+  changeDisplayName = 'CHANGE_DISPLAY_NAME',
 }
 
 // Event mirrors the structure of JSON messages that the server sends to clients
