@@ -18,6 +18,7 @@ export function establishWSConnection(gameID: string): WebSocket {
 
 export enum EventKind {
   changeDisplayName = 'CHANGE_DISPLAY_NAME',
+  notAnEvent = 'NOT_AN_EVENT',
 }
 
 // Event mirrors the structure of JSON messages that the server sends to clients
@@ -78,22 +79,38 @@ export function constructAndSendErr(
   socket.send(JSON.stringify(response));
 }
 
+// getEventKind makes sure that the provided event object is an Event, and
+// returns the EventKind of that event. It's also the future home of logging or
+// some kind of universal error handling logic.
+export function getEventKind(event: any): EventKind {
+  if (!('kind' in event)) {
+    return EventKind.notAnEvent;
+  }
+  return event.kind;
+}
+
 // isResponseOK returns whether an event response object is carrying information
 // about an something that went wrong. It's also the future home of logging or
 // some kind of universal error handling logic for error responses that indicate
 // there's a problem somewhere.
-export function isResponseOK(response: any): boolean {
-  if (!('ok' in response)) {
-    return false;
-  }
+export function isResponseOK(response: EventResponse): boolean {
   return response.ok;
 }
 
+// getResponseBody returns the body of an EventResponse that indicated something
+// was successful. If the provided EventResponse doesn't indicate that something
+// was successful, then null is returned.
+export function getResponseBody(response: EventResponse): any {
+  if (!isResponseOK(response)) {
+    return null;
+  }
+  return response.body;
+}
 // getResponseErr returns the body of an EventResponse that indicated something
 // went wrong somewhere. If the provided EventResponse doesn't indicate that
 // something went wrong, then null is returned.
 export function getResponseErr(response: EventResponse): any {
-  if (response.ok) {
+  if (isResponseOK(response)) {
     return null;
   }
   return response.body;
