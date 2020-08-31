@@ -2,12 +2,7 @@ import React, { useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../store';
 import { setDisplayName, setIsSettingDisplayName } from '../store/user/actions';
-import {
-  constructAndSendEvent,
-  EventKind,
-  isResponseOK,
-  getResponseErr,
-} from '../realtime/ws';
+import { constructAndSendEvent, EventKind } from '../realtime/ws';
 
 // Redux business.
 
@@ -39,29 +34,13 @@ const SetDisplayNameScreen: React.FC<PropsFromRedux> = (
       return;
     }
 
-    // Send a "change display name" event to the server.
     constructAndSendEvent(
       props.socket,
       EventKind.changeDisplayName,
       newDisplayName,
     );
-    // Listen for an acknowledgement from the server.
-    props.socket.onmessage = (event) => {
-      const eventResponse = JSON.parse(event.data);
-      if (!isResponseOK(eventResponse)) {
-        const err = getResponseErr(eventResponse);
-        if (err) {
-          // TODO: better error handling
-          console.error(err);
-        }
-        return;
-      }
-
-      // Response from the server looked good. Commit the display name change
-      // client-side.
-      props.setDisplayName(newDisplayName);
-      props.setIsSettingDisplayName(false);
-    };
+    props.setDisplayName(newDisplayName);
+    props.setIsSettingDisplayName(false);
   };
 
   return (
