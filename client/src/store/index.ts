@@ -1,4 +1,4 @@
-import { combineReducers, createStore } from 'redux';
+import { combineReducers, createStore, Action, Store } from 'redux';
 import gameReducer from './game/reducers';
 import userReducer from './user/reducers';
 import boardReducer from './board/reducers';
@@ -18,7 +18,7 @@ export type RootState = ReturnType<typeof rootReducer>;
 // configureStore creates and returns a Redux global store object. It's also the
 // future home for adding middleware or some kind of logging.
 // TODO: figure out how to type the reducer param properly.
-function configureStore(reducer: any) {
+function configureStore(reducer: any): Store<RootState, Action<any>> {
   return createStore(reducer);
 }
 
