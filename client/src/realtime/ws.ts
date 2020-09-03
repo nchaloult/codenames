@@ -1,7 +1,9 @@
-import { store } from '../store/index';
+import { store, RootState } from '../store/index';
 import { SERVER_URL } from '../constants';
+import { setIsCreated, setIsJoined } from '../store/game/actions';
 
 export enum EventKind {
+  lobbyInfo = 'LOBBY_INFO',
   changeDisplayName = 'CHANGE_DISPLAY_NAME',
   notAnEvent = 'NOT_AN_EVENT',
 }
@@ -120,11 +122,21 @@ function handleMsgFromServer(msg: MessageEvent) {
     switch (event.kind) {
       default:
         notifyOfUnrecognizedEvent(event);
+        break;
     }
   } else {
     switch (event.kind) {
+      case EventKind.lobbyInfo:
+        // When a client first visits a /:gameID URL and a Websocket connection
+        // with the server is established, the server will send down a lobbyInfo
+        // event to tell the client whether a game with the provided ID already
+        // exists or not.
+        store.dispatch(setIsCreated(event.body.isCreated));
+        store.dispatch(setIsJoined(false));
+        break;
       default:
         notifyOfUnrecognizedEvent(event);
+        break;
     }
   }
 }
@@ -138,8 +150,11 @@ export function establishWSConnection(gameID: string): WebSocket {
 
   socket.onmessage = (msg) => handleMsgFromServer(msg);
   // TODO: better error handling.
-  socket.onerror = () => {
-    alert('Something went wrong with the Websocket connection to the server');
+  socket.onerror = (event) => {
+    alert(
+      'Something went wrong with the Websocket connection to the server. Check the console.',
+    );
+    console.log(event);
     socket.close(1006);
   };
 

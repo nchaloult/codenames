@@ -63,7 +63,8 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Look for an active game associated with the provided gameID. If one
 	// doesn't exist, then create a new one.
-	if _, ok := h.manager.ActiveGames[gameID]; !ok {
+	_, doesGameExist := h.manager.ActiveGames[gameID]
+	if !doesGameExist {
 		// TODO: Write function somewhere in model package to randomly generate
 		// a dictionary. For now, I'm just using a dummy/stubbed one.
 		dictionary := [25]string{"foo", "bar", "baz"}
@@ -93,7 +94,13 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 	// with the same gameID.
 	newPlayer := realtime.NewPlayer(conn)
 	h.manager.ActiveGames[gameID].Players[newPlayer.DisplayName] = newPlayer
-
+	// Send the client a lobbyInfo event letting them know whether a game
+	// with the ID that they provided has already been created or not.
+	lobbyInfoEventBody := map[string]bool{
+		"isCreated": doesGameExist,
+	}
+	realtime.ConstructAndSendEvent(conn, realtime.LobbyInfo, lobbyInfoEventBody)
+	// Begin listening for events sent to the server from the client.
 	go newPlayer.ListenForEvents()
 }
 
