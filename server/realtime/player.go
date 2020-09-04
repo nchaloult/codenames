@@ -20,16 +20,10 @@ type Player struct {
 }
 
 // NewPlayer returns a pointer to a new Player object with the provided
-// connection pointer. Generates a new unique Player ID and sends it to the
-// client listening on the other end of the Websocket connection. Sets
-// IsOnRedTeam to true and IsSpymaster to false by default.
+// connection pointer. Sets IsOnRedTeam to true and IsSpymaster to false by
+// default.
 func NewPlayer(conn *websocket.Conn) *Player {
 	id := uuid.New()
-	playerIDMsg := map[string]interface{}{
-		"id": id,
-	}
-	conn.WriteJSON(playerIDMsg)
-
 	return &Player{
 		Conn:        conn,
 		ID:          id.String(),
@@ -61,9 +55,8 @@ func (p *Player) ListenForEvents() {
 
 		// Decide how to behave depending on the event's type/kind.
 		switch event.Kind {
-		case changeDisplayName:
+		case ChangeDisplayName:
 			p.DisplayName = event.Body.(string)
-			constructAndSendResponse(p.Conn, changeDisplayName, nil)
 		default:
 			errMsg := fmt.Errorf("unrecognized eventKind: %v", event.Kind)
 			constructAndSendErr(p.Conn, errMsg)

@@ -1,22 +1,9 @@
+import { store, RootState } from '../store/index';
 import { SERVER_URL } from '../constants';
-
-// establishWSConnection attempts to establish a persistent Websocket connection
-// with the server.
-export function establishWSConnection(gameID: string): WebSocket {
-  const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-  const socketURL = `${protocol}${SERVER_URL}/ws?gameID=${gameID}`;
-  const socket = new WebSocket(socketURL);
-
-  // TODO: better error handling.
-  socket.onerror = () => {
-    alert('Something went wrong with the Websocket connection to the server');
-    socket.close(1006);
-  };
-
-  return socket;
-}
+import { setIsCreated, setIsJoined } from '../store/game/actions';
 
 export enum EventKind {
+  lobbyInfo = 'LOBBY_INFO',
   changeDisplayName = 'CHANGE_DISPLAY_NAME',
   notAnEvent = 'NOT_AN_EVENT',
 }
@@ -114,4 +101,62 @@ export function getResponseErr(response: EventResponse): any {
     return null;
   }
   return response.body;
+}
+
+// notifyOfUnrecognizedEvent is called when we receive a Websocket event from
+// the server with an EventKind that we don't recongize.
+function notifyOfUnrecognizedEvent(event: Event) {
+  // TODO: better error handling.
+  alert('Unrecognized Websocket event from the server. Check the console.');
+  console.log(event);
+}
+
+// handleMsgFromServer parses a Websocket message from the server, and acts
+// appropriately depending on that event's kind and the client's state (have we
+// joined a game? Is the game we're trying to join created already?)
+function handleMsgFromServer(msg: MessageEvent) {
+  const globalState = store.getState();
+  const event: Event = JSON.parse(msg.data);
+
+  if (globalState.game.isJoined) {
+    switch (event.kind) {
+      default:
+        notifyOfUnrecognizedEvent(event);
+        break;
+    }
+  } else {
+    switch (event.kind) {
+      case EventKind.lobbyInfo:
+        // When a client first visits a /:gameID URL and a Websocket connection
+        // with the server is established, the server will send down a lobbyInfo
+        // event to tell the client whether a game with the provided ID already
+        // exists or not.
+        store.dispatch(setIsCreated(event.body.isCreated));
+        store.dispatch(setIsJoined(false));
+        break;
+      default:
+        notifyOfUnrecognizedEvent(event);
+        break;
+    }
+  }
+}
+
+// establishWSConnection attempts to establish a persistent Websocket connection
+// with the server.
+export function establishWSConnection(gameID: string): WebSocket {
+  const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+  const socketURL = `${protocol}${SERVER_URL}/ws?gameID=${gameID}`;
+  const socket = new WebSocket(socketURL);
+
+  socket.onmessage = (msg) => handleMsgFromServer(msg);
+  // TODO: better error handling.
+  socket.onerror = (event) => {
+    alert(
+      'Something went wrong with the Websocket connection to the server. Check the console.',
+    );
+    console.log(event);
+    socket.close(1006);
+  };
+
+  return socket;
 }
