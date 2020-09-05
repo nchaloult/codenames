@@ -22,11 +22,16 @@ type Player struct {
 // NewPlayer returns a pointer to a new Player object with the provided
 // connection pointer. Sets IsOnRedTeam to true and IsSpymaster to false by
 // default.
+//
+// NewPlayer sends a NewPlayerID event to the client once a UUID has been
+// generated for them.
 func NewPlayer(conn *websocket.Conn) *Player {
-	id := uuid.New()
+	id := uuid.New().String()
+	eventBody := map[string]string{"id": id}
+	ConstructAndSendEvent(conn, NewPlayerID, eventBody)
 	return &Player{
 		Conn:        conn,
-		ID:          id.String(),
+		ID:          id,
 		IsOnRedTeam: true,
 		IsSpymaster: false,
 	}
