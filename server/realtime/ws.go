@@ -11,6 +11,10 @@ const (
 	// connects to a /:gameID URL. It communicates whether a game with the
 	// provided ID already exists or not.
 	LobbyInfo EventKind = "LOBBY_INFO"
+	// NewPlayerID describes an event that the server sends to a client after
+	// making a new Player object for them. Clients need to know what their
+	// Player IDs are in order to include in the bodies of select events.
+	NewPlayerID EventKind = "NEW_PLAYER_ID"
 	// ChangeDisplayName describes an event that the client sends when they
 	// change their display name.
 	ChangeDisplayName EventKind = "CHANGE_DISPLAY_NAME"

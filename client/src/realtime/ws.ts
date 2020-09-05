@@ -1,9 +1,11 @@
 import { store, RootState } from '../store/index';
 import { SERVER_URL } from '../constants';
 import { setIsCreated, setIsJoined } from '../store/game/actions';
+import { setUserID } from '../store/user/actions';
 
 export enum EventKind {
   lobbyInfo = 'LOBBY_INFO',
+  newPlayerID = 'NEW_PLAYER_ID',
   changeDisplayName = 'CHANGE_DISPLAY_NAME',
   notAnEvent = 'NOT_AN_EVENT',
 }
@@ -126,6 +128,12 @@ function handleMsgFromServer(msg: MessageEvent) {
     }
   } else {
     switch (event.kind) {
+      case EventKind.newPlayerID:
+        // When a client first connects to a game, the server creates a new
+        // Player object for them with a UUID. The client needs to include this
+        // UUID in the body of select events that it sends.
+        store.dispatch(setUserID(event.body.id));
+        break;
       case EventKind.lobbyInfo:
         // When a client first visits a /:gameID URL and a Websocket connection
         // with the server is established, the server will send down a lobbyInfo
