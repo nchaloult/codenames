@@ -41,8 +41,8 @@ const JoinGameScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
               Join Game
             </button>
           </div>
-          <TeamMembersList title="Red Team" />
-          <TeamMembersList title="Blue Team" />
+          <TeamMembersList isRedTeam={true} />
+          <TeamMembersList isRedTeam={false} />
         </div>
       </div>
     </div>

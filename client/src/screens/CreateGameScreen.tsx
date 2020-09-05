@@ -42,8 +42,8 @@ const CreateGameScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
               Create Game
             </button>
           </div>
-          <TeamMembersList title="Red Team" />
-          <TeamMembersList title="Blue Team" />
+          <TeamMembersList isRedTeam={true} />
+          <TeamMembersList isRedTeam={false} />
         </div>
       </div>
     </div>

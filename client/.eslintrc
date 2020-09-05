@@ -26,6 +26,7 @@
   },
   "plugins": ["react", "@typescript-eslint"],
   "rules": {
+    "react/jsx-boolean-value": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "react/jsx-filename-extension": [
       2,
