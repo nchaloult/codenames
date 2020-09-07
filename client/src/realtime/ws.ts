@@ -2,6 +2,7 @@ import { store, RootState } from '../store/index';
 import { SERVER_URL } from '../constants';
 import { setIsCreated, setIsJoined } from '../store/game/actions';
 import { setUserID } from '../store/user/actions';
+import { addRedTeamPlayer } from '../store/lobby/actions';
 
 export enum EventKind {
   lobbyInfo = 'LOBBY_INFO',
@@ -133,6 +134,9 @@ function handleMsgFromServer(msg: MessageEvent) {
         // Player object for them with a UUID. The client needs to include this
         // UUID in the body of select events that it sends.
         store.dispatch(setUserID(event.body.id));
+        // When new players join a lobby, the server puts them on red team by
+        // default. Show this on the client, as well.
+        store.dispatch(addRedTeamPlayer({ id: event.body.id }));
         break;
       case EventKind.lobbyInfo:
         // When a client first visits a /:gameID URL and a Websocket connection
