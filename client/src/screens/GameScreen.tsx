@@ -47,18 +47,6 @@ const GameScreen: React.FC<Props> = (props: Props) => {
     const socket = establishWSConnection(gameIDFromURL);
     props.setSocket(socket);
 
-    // For now, just stub this out & pretend that the server told us that a game
-    // with the provided ID doesn't exist, therefore we'll be creating a new
-    // one.
-    props.setIsCreated(false);
-    props.setIsJoined(false);
-
-    // Once a connection is established, the server will create a new game with
-    // the provided gameID if one doens't already exist. Once a game has either
-    // been found or a new one has been created, the server will then add a new
-    // Player to that game. That Player will have its own unique ID, which the
-    // client needs to store. Listen for that new Player ID here, as well.
-
     setIsLoading(false);
   }, []);
 
