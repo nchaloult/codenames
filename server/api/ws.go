@@ -103,6 +103,7 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 	realtime.ConstructAndSendEvent(conn, realtime.LobbyInfo, lobbyInfoEventBody)
 	// Begin listening for events sent to the server from the client.
 	go newPlayer.ListenForEvents()
+	go newPlayer.SendBroadcastedEventsToClient()
 }
 
 // RegisterRoutes registers handlers for all of the routes that wsHandler

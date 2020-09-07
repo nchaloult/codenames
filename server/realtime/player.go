@@ -56,6 +56,24 @@ func (p *Player) broadcastToOtherPlayers(kind EventKind, body interface{}) {
 	p.interactor.msgsToBroadcast <- msg
 }
 
+// SendBroadcastedEventsToClient watches a Player's broadcastedMsgs channel for
+// messages from an Interactor, and sends it to our client along our WS
+// connection.
+func (p *Player) SendBroadcastedEventsToClient() {
+	defer func() {
+		p.Conn.Close()
+	}()
+	for broadcastedEvent := range p.broadcastedMsgs {
+		ConstructAndSendEvent(p.Conn, broadcastedEvent.Kind, broadcastedEvent.Body)
+	}
+	// Once we reach this point, the channel's been closed. Send a CloseMessage.
+	// This isn't done in the above deferred func because there are situations
+	// where we want to return from this func, but not close the WS connection.
+	// For instance, if an error is returned when we try to write a message to
+	// the WS connection.
+	p.Conn.WriteMessage(websocket.CloseMessage, []byte{})
+}
+
 // ListenForEvents watches a Player's Websocket connection for messages from
 // their client, like if they click a button, for example.
 func (p *Player) ListenForEvents() {
