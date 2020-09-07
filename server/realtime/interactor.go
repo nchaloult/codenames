@@ -14,9 +14,8 @@ import (
 // associated with, or responsible for, each Game.
 type Interactor struct {
 	Game *model.Game
-
 	// Players stores Player objects for each active client, indexed by their
-	// display name.
+	// IDs.
 	Players map[string]*Player
 }
 
