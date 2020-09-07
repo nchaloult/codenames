@@ -30,15 +30,13 @@ export default function lobbyReducer(
     case REMOVE_RED_TEAM_PLAYER:
       return {
         ...state,
-        redTeam: state.redTeam.filter(
-          (player) => player.displayName !== action.payload,
-        ),
+        redTeam: state.redTeam.filter((player) => player.id !== action.payload),
       };
     case REMOVE_BLUE_TEAM_PLAYER:
       return {
         ...state,
         blueTeam: state.blueTeam.filter(
-          (player) => player.displayName !== action.payload,
+          (player) => player.id !== action.payload,
         ),
       };
     default:

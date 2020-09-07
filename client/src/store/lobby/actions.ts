@@ -24,17 +24,17 @@ export function addBlueTeamPlayer(player: Player): LobbyActionTypes {
 }
 
 // Action creator for the REMOVE_RED_TEAM_PLAYER action type.
-export function removeRedTeamPlayer(displayName: string): LobbyActionTypes {
+export function removeRedTeamPlayer(id: string): LobbyActionTypes {
   return {
     type: REMOVE_RED_TEAM_PLAYER,
-    payload: displayName,
+    payload: id,
   };
 }
 
 // Action creator for the REMOVE_BLUE_TEAM_PLAYER action type.
-export function removeBlueTeamPlayer(displayName: string): LobbyActionTypes {
+export function removeBlueTeamPlayer(id: string): LobbyActionTypes {
   return {
     type: REMOVE_BLUE_TEAM_PLAYER,
-    payload: displayName,
+    payload: id,
   };
 }
