@@ -3,16 +3,20 @@ import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from '../store';
 import { setDisplayName, setIsSettingDisplayName } from '../store/user/actions';
 import { constructAndSendEvent, EventKind } from '../realtime/ws';
+import { changeDisplayName } from '../store/lobby/actions';
 
 // Redux business.
 
 const mapState = (state: RootState) => ({
+  id: state.user.id,
   displayName: state.user.displayName,
   isSettingDisplayName: state.user.isSettingDisplayName,
   socket: state.websocket.socket,
 });
 const mapDispatch = {
-  setDisplayName: (displayName: string) => setDisplayName(displayName),
+  setLobbyDisplayName: (id: string, displayName: string) =>
+    changeDisplayName(id, displayName),
+  setClientDisplayName: (displayName: string) => setDisplayName(displayName),
   setIsSettingDisplayName: (isSettingDisplayName: boolean) =>
     setIsSettingDisplayName(isSettingDisplayName),
 };
@@ -39,7 +43,8 @@ const SetDisplayNameScreen: React.FC<PropsFromRedux> = (
       EventKind.changeDisplayName,
       newDisplayName,
     );
-    props.setDisplayName(newDisplayName);
+    props.setLobbyDisplayName(props.id, newDisplayName);
+    props.setClientDisplayName(newDisplayName);
     props.setIsSettingDisplayName(false);
   };
 

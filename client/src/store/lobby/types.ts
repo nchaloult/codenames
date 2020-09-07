@@ -11,6 +11,11 @@ export interface LobbyState {
   blueTeam: Player[];
 }
 
+export const CHANGE_DISPLAY_NAME = 'CHANGE_DISPLAY_NAME';
+interface ChangeDisplayNameAction {
+  type: typeof CHANGE_DISPLAY_NAME;
+  payload: { id: string; newName: string };
+}
 export const ADD_RED_TEAM_PLAYER = 'ADD_RED_TEAM_PLAYER';
 interface AddRedTeamPlayerAction {
   type: typeof ADD_RED_TEAM_PLAYER;
@@ -32,6 +37,7 @@ interface RemoveBlueTeamPlayerAction {
   payload: string;
 }
 export type LobbyActionTypes =
+  | ChangeDisplayNameAction
   | AddRedTeamPlayerAction
   | AddBlueTeamPlayerAction
   | RemoveRedTeamPlayerAction

@@ -5,6 +5,7 @@ import {
   ADD_BLUE_TEAM_PLAYER,
   REMOVE_RED_TEAM_PLAYER,
   REMOVE_BLUE_TEAM_PLAYER,
+  CHANGE_DISPLAY_NAME,
 } from './types';
 
 const initialState: LobbyState = {
@@ -17,6 +18,28 @@ export default function lobbyReducer(
   action: LobbyActionTypes,
 ): LobbyState {
   switch (action.type) {
+    case CHANGE_DISPLAY_NAME:
+      return {
+        ...state,
+        redTeam: state.redTeam.map((player) => {
+          if (player.id === action.payload.id) {
+            return {
+              id: player.id,
+              displayName: action.payload.newName,
+            };
+          }
+          return player;
+        }),
+        blueTeam: state.blueTeam.map((player) => {
+          if (player.id === action.payload.id) {
+            return {
+              id: player.id,
+              displayName: action.payload.newName,
+            };
+          }
+          return player;
+        }),
+      };
     case ADD_RED_TEAM_PLAYER:
       return {
         ...state,
