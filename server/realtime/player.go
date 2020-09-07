@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// Artbitrarily chosen value. Regardless of how many Players are (realistically)
+// Arbitrarily chosen value. Regardless of how many Players are (realistically)
 // in a Game, I think it's pretty unlikely that 16 of those Players will all
 // need to broadcast an event at nearly the same time.
 const broadcastedMsgsBufferSize = 16
