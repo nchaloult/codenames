@@ -4,3 +4,21 @@
   background: #eee;
   border-radius: 12px;
 }
+
+#team-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 360px;
+  overflow-y: scroll;
+}
+
+.team-list-item {
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  background: #ddd;
+  border-radius: 6px;
+}
+
+#highlighted-team-list-item {
+  background: #ccc;
+}
