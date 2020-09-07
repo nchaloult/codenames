@@ -17,13 +17,15 @@ const broadcastedMsgsBufferSize = 16
 // connection that they're connected to the server with. Players are managed by
 // an Interactor.
 type Player struct {
-	Conn        *websocket.Conn
+	Conn       *websocket.Conn
+	interactor *Interactor
+	// Buffered channel of events that were broadcasted from other Players.
+	broadcastedMsgs chan *event
+
 	ID          string
 	DisplayName string
 	IsOnRedTeam bool
 	IsSpymaster bool
-	// Buffered channel of events that were broadcasted from other Players.
-	broadcastedMsgs chan *event
 }
 
 // NewPlayer returns a pointer to a new Player object with the provided
@@ -32,17 +34,26 @@ type Player struct {
 //
 // NewPlayer sends a NewPlayerID event to the client once a UUID has been
 // generated for them.
-func NewPlayer(conn *websocket.Conn) *Player {
+func NewPlayer(conn *websocket.Conn, i *Interactor) *Player {
 	id := uuid.New().String()
 	eventBody := map[string]string{"id": id}
 	ConstructAndSendEvent(conn, NewPlayerID, eventBody)
 	return &Player{
 		Conn:            conn,
+		interactor:      i,
 		broadcastedMsgs: make(chan *event, broadcastedMsgsBufferSize),
 		ID:              id,
 		IsOnRedTeam:     true,
 		IsSpymaster:     false,
 	}
+}
+
+// broadcastToOtherPlayers constructs a broadcastMsg struct and pushes it onto
+// an Interactor's msgsToBroadcast channel.
+func (p *Player) broadcastToOtherPlayers(kind EventKind, body interface{}) {
+	event := event{Kind: kind, Body: body}
+	msg := &broadcastMsg{originClientID: p.ID, event: &event}
+	p.interactor.msgsToBroadcast <- msg
 }
 
 // ListenForEvents watches a Player's Websocket connection for messages from
