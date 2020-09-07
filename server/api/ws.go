@@ -71,6 +71,7 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 		newGame := model.NewGame(dictionary)
 		newInteractor := realtime.NewInteractor(newGame)
 		h.manager.ActiveGames[gameID] = newInteractor
+		go newInteractor.ListenForBroadcasts()
 	}
 
 	upgrader := websocket.Upgrader{}
@@ -92,8 +93,8 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO: make this async by pushing this newPlayer pointer to some channel.
 	// This will break if more than one client hits the /ws endpoint at once
 	// with the same gameID.
-	newPlayer := realtime.NewPlayer(conn)
-	h.manager.ActiveGames[gameID].Players[newPlayer.DisplayName] = newPlayer
+	newPlayer := realtime.NewPlayer(conn, h.manager.ActiveGames[gameID])
+	h.manager.ActiveGames[gameID].Players[newPlayer.ID] = newPlayer
 	// Send the client a lobbyInfo event letting them know whether a game
 	// with the ID that they provided has already been created or not.
 	lobbyInfoEventBody := map[string]bool{
@@ -102,6 +103,7 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 	realtime.ConstructAndSendEvent(conn, realtime.LobbyInfo, lobbyInfoEventBody)
 	// Begin listening for events sent to the server from the client.
 	go newPlayer.ListenForEvents()
+	go newPlayer.SendBroadcastedEventsToClient()
 }
 
 // RegisterRoutes registers handlers for all of the routes that wsHandler
