@@ -35,6 +35,18 @@ type eventResponse struct {
 	Body interface{} `json:"body"`
 }
 
+// broadcastMsg objects are stored in an Interactor's broadcast channel. They
+// contain an event to be broadcasted to all Players in a Game except for the
+// Player who originally sent the event.
+type broadcastMsg struct {
+	// ID of the Player who originally sent the event. This is so that Players
+	// who send events that are broadcasted to everyone in a Game don't receive
+	// their own event.
+	originClientID string
+	// The event to broadcast to all other Players in a Game.
+	event *event
+}
+
 // ConstructAndSendEvent builds an event struct with the provided fields,
 // marshals it to JSON, and sends it along the provided Websocket connection.
 func ConstructAndSendEvent(conn *websocket.Conn, kind EventKind, body interface{}) {

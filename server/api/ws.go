@@ -71,6 +71,7 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 		newGame := model.NewGame(dictionary)
 		newInteractor := realtime.NewInteractor(newGame)
 		h.manager.ActiveGames[gameID] = newInteractor
+		go newInteractor.ListenForBroadcasts()
 	}
 
 	upgrader := websocket.Upgrader{}
