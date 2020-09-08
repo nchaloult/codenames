@@ -13,6 +13,7 @@ import { UserState } from '../store/user/types';
 export enum EventKind {
   lobbyInfo = 'LOBBY_INFO',
   newPlayerID = 'NEW_PLAYER_ID',
+  newPlayerJoined = 'NEW_PLAYER_JOINED',
   changeDisplayName = 'CHANGE_DISPLAY_NAME',
   changeTeam = 'CHANGE_TEAM',
   someoneElseChangeTeam = 'SOMEONE_ELSE_CHANGE_TEAM',
@@ -145,6 +146,17 @@ function handleMsgFromServer(msg: MessageEvent) {
         // When new players join a lobby, the server puts them on red team by
         // default. Show this on the client, as well.
         store.dispatch(addRedTeamPlayer({ id: event.body.id }));
+        break;
+      case EventKind.newPlayerJoined:
+        // When a client joins a game lobby and sets their display name, they'll
+        // broadcast a newPlayerJoined event. Add this new Player to the red
+        // team.
+        store.dispatch(
+          addRedTeamPlayer({
+            id: event.body.id,
+            displayName: event.body.displayName,
+          }),
+        );
         break;
       case EventKind.lobbyInfo:
         // When a client first visits a /:gameID URL and a Websocket connection

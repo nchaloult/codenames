@@ -99,6 +99,8 @@ func (p *Player) ListenForEvents() {
 
 		// Decide how to behave depending on the event's type/kind.
 		switch event.Kind {
+		case NewPlayerJoined:
+			p.broadcastToOtherPlayers(NewPlayerJoined, event.Body)
 		case ChangeDisplayName:
 			p.DisplayName = event.Body.(string)
 		case ChangeTeam:

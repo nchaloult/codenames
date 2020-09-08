@@ -16,6 +16,11 @@ const (
 	// making a new Player object for them. Clients need to know what their
 	// Player IDs are in order to include in the bodies of select events.
 	NewPlayerID EventKind = "NEW_PLAYER_ID"
+	// NewPlayerJoined describes an event that a client sends after it first
+	// connects to a /:gameID URL and sets its display name. This gets
+	// broadcasted to all other Players in that game lobby so that they may add
+	// this new player to their red teams client-side.
+	NewPlayerJoined EventKind = "NEW_PLAYER_JOINED"
 	// ChangeDisplayName describes an event that the client sends when they
 	// change their display name.
 	ChangeDisplayName EventKind = "CHANGE_DISPLAY_NAME"

@@ -37,14 +37,24 @@ const SetDisplayNameScreen: React.FC<PropsFromRedux> = (
       // connection issue.
       return;
     }
-
+    // If the user was brought to this screen because they just connected to a
+    // game lobby, then we need to let all other Players in that lobby know that
+    // we've joined.
+    if (props.displayName === '') {
+      constructAndSendEvent(props.socket, EventKind.newPlayerJoined, {
+        id: props.id,
+        displayName: newDisplayName,
+      });
+    }
     constructAndSendEvent(
       props.socket,
       EventKind.changeDisplayName,
       newDisplayName,
     );
+    // Change our display name client-side.
     props.setLobbyDisplayName(props.id, newDisplayName);
     props.setClientDisplayName(newDisplayName);
+    // Return back to either CreateGameScreen or JoinGameScreen.
     props.setIsSettingDisplayName(false);
   };
 
