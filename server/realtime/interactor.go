@@ -30,6 +30,29 @@ func NewInteractor(game *model.Game) *Interactor {
 	}
 }
 
+// SendLobbyInfo sends a lobbyInfo event to the provided Player. This event
+// contains information about whether they are creating a new Game or joining an
+// ongoing one, as well as all of the other Players in the Game.
+func (i *Interactor) SendLobbyInfo(isCreated bool, player *Player) {
+	// Separate Players into their two teams.
+	redTeam := make([]*Player, 0)
+	blueTeam := make([]*Player, 0)
+	for _, player := range i.Players {
+		if player.IsOnRedTeam {
+			redTeam = append(redTeam, player)
+		} else {
+			blueTeam = append(blueTeam, player)
+		}
+	}
+	// Build and send lobbyInfo event.
+	eventBody := map[string]interface{}{
+		"isCreated": isCreated,
+		"redTeam":   redTeam,
+		"blueTeam":  blueTeam,
+	}
+	ConstructAndSendEvent(player.Conn, LobbyInfo, eventBody)
+}
+
 // ListenForBroadcasts watches the msgsToBroadcast channel for any new events.
 // When a new event appears, broadcast that event to all other Players in a Game
 // except for the Player who originally created that event.

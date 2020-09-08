@@ -22,8 +22,8 @@ type Player struct {
 	// Buffered channel of events that were broadcasted from other Players.
 	broadcastedMsgs chan *event
 
-	ID          string
-	DisplayName string
+	ID          string `json:"id"`
+	DisplayName string `json:"displayName"`
 	IsOnRedTeam bool
 	IsSpymaster bool
 }

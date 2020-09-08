@@ -8,6 +8,7 @@ import {
   removeRedTeamPlayer,
   addBlueTeamPlayer,
 } from '../store/lobby/actions';
+import { UserState } from '../store/user/types';
 
 export enum EventKind {
   lobbyInfo = 'LOBBY_INFO',
@@ -148,10 +149,32 @@ function handleMsgFromServer(msg: MessageEvent) {
       case EventKind.lobbyInfo:
         // When a client first visits a /:gameID URL and a Websocket connection
         // with the server is established, the server will send down a lobbyInfo
-        // event to tell the client whether a game with the provided ID already
-        // exists or not.
+        // event to tell the client about the game that they're either creating
+        // or joining, like what other Players are on which team, for instance.
         store.dispatch(setIsCreated(event.body.isCreated));
         store.dispatch(setIsJoined(false));
+        event.body.redTeam.forEach((player: UserState) => {
+          if (player.id === store.getState().user.id) {
+            return;
+          }
+          store.dispatch(
+            addRedTeamPlayer({
+              id: player.id,
+              displayName: player.displayName,
+            }),
+          );
+        });
+        event.body.blueTeam.forEach((player: UserState) => {
+          if (player.id === store.getState().user.id) {
+            return;
+          }
+          store.dispatch(
+            addBlueTeamPlayer({
+              id: player.id,
+              displayName: player.displayName,
+            }),
+          );
+        });
         break;
       case EventKind.someoneElseChangeTeam:
         // When another player in a game lobby swaps teams, this event is

@@ -9,7 +9,8 @@ type EventKind string
 const (
 	// LobbyInfo describes an event that the server sends when a client first
 	// connects to a /:gameID URL. It communicates whether a game with the
-	// provided ID already exists or not.
+	// provided ID already exists or not, as well as the other players that are
+	// already in that game.
 	LobbyInfo EventKind = "LOBBY_INFO"
 	// NewPlayerID describes an event that the server sends to a client after
 	// making a new Player object for them. Clients need to know what their

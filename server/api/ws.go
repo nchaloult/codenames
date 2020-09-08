@@ -95,12 +95,9 @@ func (h *WSHandler) defaultHandler(w http.ResponseWriter, r *http.Request) {
 	// with the same gameID.
 	newPlayer := realtime.NewPlayer(conn, h.manager.ActiveGames[gameID])
 	h.manager.ActiveGames[gameID].Players[newPlayer.ID] = newPlayer
-	// Send the client a lobbyInfo event letting them know whether a game
-	// with the ID that they provided has already been created or not.
-	lobbyInfoEventBody := map[string]bool{
-		"isCreated": doesGameExist,
-	}
-	realtime.ConstructAndSendEvent(conn, realtime.LobbyInfo, lobbyInfoEventBody)
+	// Send the client a lobbyInfo event so that they may reconstruct the state
+	// of the lobby (or the ongoing game) on their end.
+	h.manager.ActiveGames[gameID].SendLobbyInfo(doesGameExist, newPlayer)
 	// Begin listening for events sent to the server from the client.
 	go newPlayer.ListenForEvents()
 	go newPlayer.SendBroadcastedEventsToClient()
