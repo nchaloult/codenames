@@ -4,19 +4,59 @@ import { RootState } from '../store';
 import DisplayName from '../components/DisplayName';
 import TeamMembersList from '../components/TeamMembersList';
 import SetDisplayNameScreen from './SetDisplayNameScreen';
+import { constructAndSendEvent, EventKind } from '../realtime/ws';
+import { Player } from '../store/lobby/types';
+import {
+  addRedTeamPlayer,
+  addBlueTeamPlayer,
+  removeBlueTeamPlayer,
+  removeRedTeamPlayer,
+} from '../store/lobby/actions';
 
 // Redux business.
 
 const mapState = (state: RootState) => ({
+  playerID: state.user.id,
   gameID: state.game.id,
+  displayName: state.user.displayName,
   isSettingDisplayName: state.user.isSettingDisplayName,
+  socket: state.websocket.socket,
 });
-const connector = connect(mapState);
+const mapDispatch = {
+  addRedTeamPlayer: (player: Player) => addRedTeamPlayer(player),
+  addBlueTeamPlayer: (player: Player) => addBlueTeamPlayer(player),
+  removeRedTeamPlayer: (id: string) => removeRedTeamPlayer(id),
+  removeBlueTeamPlayer: (id: string) => removeBlueTeamPlayer(id),
+};
+const connector = connect(mapState, mapDispatch);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 // Component.
 
 const JoinGameScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
+  const handleJoinTeamButtonPressed = (isJoiningRedTeam: boolean) => {
+    if (!props.socket) {
+      // TODO: redirect to some /error route or something to indicate a
+      // connection issue.
+      return;
+    }
+
+    constructAndSendEvent(props.socket, EventKind.changeTeam, isJoiningRedTeam);
+    if (isJoiningRedTeam) {
+      props.addRedTeamPlayer({
+        id: props.playerID,
+        displayName: props.displayName,
+      });
+      props.removeBlueTeamPlayer(props.playerID);
+    } else {
+      props.addBlueTeamPlayer({
+        id: props.playerID,
+        displayName: props.displayName,
+      });
+      props.removeRedTeamPlayer(props.playerID);
+    }
+  };
+
   if (props.isSettingDisplayName) {
     return <SetDisplayNameScreen />;
   }
@@ -28,10 +68,16 @@ const JoinGameScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
             <h1>Join an Ongoing Game</h1>
             <h3>{props.gameID.toUpperCase()}</h3>
             <DisplayName />
-            <button className="secondary-btn" type="button">
+            <button
+              className="secondary-btn"
+              type="button"
+              onClick={() => handleJoinTeamButtonPressed(true)}>
               Join Red Team
             </button>
-            <button className="secondary-btn" type="button">
+            <button
+              className="secondary-btn"
+              type="button"
+              onClick={() => handleJoinTeamButtonPressed(false)}>
               Join Blue Team
             </button>
             <button className="secondary-btn" type="button">

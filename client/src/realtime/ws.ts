@@ -2,12 +2,19 @@ import { store, RootState } from '../store/index';
 import { SERVER_URL } from '../constants';
 import { setIsCreated, setIsJoined } from '../store/game/actions';
 import { setUserID } from '../store/user/actions';
-import { addRedTeamPlayer } from '../store/lobby/actions';
+import {
+  addRedTeamPlayer,
+  removeBlueTeamPlayer,
+  removeRedTeamPlayer,
+  addBlueTeamPlayer,
+} from '../store/lobby/actions';
 
 export enum EventKind {
   lobbyInfo = 'LOBBY_INFO',
   newPlayerID = 'NEW_PLAYER_ID',
   changeDisplayName = 'CHANGE_DISPLAY_NAME',
+  changeTeam = 'CHANGE_TEAM',
+  someoneElseChangeTeam = 'SOMEONE_ELSE_CHANGE_TEAM',
   notAnEvent = 'NOT_AN_EVENT',
 }
 
@@ -145,6 +152,27 @@ function handleMsgFromServer(msg: MessageEvent) {
         // exists or not.
         store.dispatch(setIsCreated(event.body.isCreated));
         store.dispatch(setIsJoined(false));
+        break;
+      case EventKind.someoneElseChangeTeam:
+        // When another player in a game lobby swaps teams, this event is
+        // broadcasted to all other players in that lobby.
+        if (event.body.isOnRedTeam) {
+          store.dispatch(removeBlueTeamPlayer(event.body.id));
+          store.dispatch(
+            addRedTeamPlayer({
+              id: event.body.id,
+              displayName: event.body.displayName,
+            }),
+          );
+        } else {
+          store.dispatch(removeRedTeamPlayer(event.body.id));
+          store.dispatch(
+            addBlueTeamPlayer({
+              id: event.body.id,
+              displayName: event.body.displayName,
+            }),
+          );
+        }
         break;
       default:
         notifyOfUnrecognizedEvent(event);

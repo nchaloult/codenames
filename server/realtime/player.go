@@ -101,6 +101,17 @@ func (p *Player) ListenForEvents() {
 		switch event.Kind {
 		case ChangeDisplayName:
 			p.DisplayName = event.Body.(string)
+		case ChangeTeam:
+			switchingToRedTeam := event.Body.(bool)
+			if (switchingToRedTeam && !p.IsOnRedTeam) || (!switchingToRedTeam && p.IsOnRedTeam) {
+				p.IsOnRedTeam = switchingToRedTeam
+				body := map[string]interface{}{
+					"id":          p.ID,
+					"displayName": p.DisplayName,
+					"isOnRedTeam": switchingToRedTeam,
+				}
+				p.broadcastToOtherPlayers(SomeoneElseChangeTeam, body)
+			}
 		default:
 			errMsg := fmt.Errorf("unrecognized eventKind: %v", event.Kind)
 			constructAndSendErr(p.Conn, errMsg)
