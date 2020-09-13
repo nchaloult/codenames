@@ -24,6 +24,9 @@ const (
 	// ChangeDisplayName describes an event that the client sends when they
 	// change their display name.
 	ChangeDisplayName EventKind = "CHANGE_DISPLAY_NAME"
+	// SomeoneElseChangeDisplayName describes an event that the server sends to
+	// all clients in a game if one of the players changes their display name.
+	SomeoneElseChangeDisplayName EventKind = "SOMEONE_ELSE_CHANGE_DISPLAY_NAME"
 	// ChangeTeam describes an event that the client has swapped teams in a game
 	// lobby.
 	ChangeTeam EventKind = "CHANGE_TEAM"

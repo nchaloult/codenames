@@ -103,6 +103,11 @@ func (p *Player) ListenForEvents() {
 			p.broadcastToOtherPlayers(NewPlayerJoined, event.Body)
 		case ChangeDisplayName:
 			p.DisplayName = event.Body.(string)
+			body := map[string]string{
+				"id":          p.ID,
+				"displayName": event.Body.(string),
+			}
+			p.broadcastToOtherPlayers(SomeoneElseChangeDisplayName, body)
 		case ChangeTeam:
 			switchingToRedTeam := event.Body.(bool)
 			if (switchingToRedTeam && !p.IsOnRedTeam) || (!switchingToRedTeam && p.IsOnRedTeam) {

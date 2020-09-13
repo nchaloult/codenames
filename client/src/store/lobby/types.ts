@@ -16,6 +16,12 @@ interface ChangeDisplayNameAction {
   type: typeof CHANGE_DISPLAY_NAME;
   payload: { id: string; newName: string };
 }
+export const SOMEONE_ELSE_CHANGE_DISPLAY_NAME =
+  'SOMEONE_ELSE_CHANGE_DISPLAY_NAME';
+interface SomeoneElseChangeDisplayNameAction {
+  type: typeof SOMEONE_ELSE_CHANGE_DISPLAY_NAME;
+  payload: { id: string; newName: string };
+}
 export const ADD_RED_TEAM_PLAYER = 'ADD_RED_TEAM_PLAYER';
 interface AddRedTeamPlayerAction {
   type: typeof ADD_RED_TEAM_PLAYER;
@@ -38,6 +44,7 @@ interface RemoveBlueTeamPlayerAction {
 }
 export type LobbyActionTypes =
   | ChangeDisplayNameAction
+  | SomeoneElseChangeDisplayNameAction
   | AddRedTeamPlayerAction
   | AddBlueTeamPlayerAction
   | RemoveRedTeamPlayerAction

@@ -7,6 +7,7 @@ import {
   removeBlueTeamPlayer,
   removeRedTeamPlayer,
   addBlueTeamPlayer,
+  changeSomeoneElsesDisplayName,
 } from '../store/lobby/actions';
 import { UserState } from '../store/user/types';
 
@@ -15,6 +16,7 @@ export enum EventKind {
   newPlayerID = 'NEW_PLAYER_ID',
   newPlayerJoined = 'NEW_PLAYER_JOINED',
   changeDisplayName = 'CHANGE_DISPLAY_NAME',
+  someoneElseChangeDisplayName = 'SOMEONE_ELSE_CHANGE_DISPLAY_NAME',
   changeTeam = 'CHANGE_TEAM',
   someoneElseChangeTeam = 'SOMEONE_ELSE_CHANGE_TEAM',
   notAnEvent = 'NOT_AN_EVENT',
@@ -187,6 +189,13 @@ function handleMsgFromServer(msg: MessageEvent) {
             }),
           );
         });
+        break;
+      case EventKind.someoneElseChangeDisplayName:
+        // When another player in a game lobby changes their display name, this
+        // event is broadcasted to all other players in that lobby.
+        store.dispatch(
+          changeSomeoneElsesDisplayName(event.body.id, event.body.displayName),
+        );
         break;
       case EventKind.someoneElseChangeTeam:
         // When another player in a game lobby swaps teams, this event is

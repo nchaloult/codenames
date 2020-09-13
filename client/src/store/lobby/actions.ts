@@ -6,6 +6,7 @@ import {
   REMOVE_RED_TEAM_PLAYER,
   REMOVE_BLUE_TEAM_PLAYER,
   CHANGE_DISPLAY_NAME,
+  SOMEONE_ELSE_CHANGE_DISPLAY_NAME,
 } from './types';
 
 // Action creator for the CHANGE_DISPLAY_NAME action type.
@@ -15,6 +16,17 @@ export function changeDisplayName(
 ): LobbyActionTypes {
   return {
     type: CHANGE_DISPLAY_NAME,
+    payload: { id, newName },
+  };
+}
+
+// Action creator for the SOMEONE_ELSE_CHANGE_DISPLAY_NAME action type.
+export function changeSomeoneElsesDisplayName(
+  id: string,
+  newName: string,
+): LobbyActionTypes {
+  return {
+    type: SOMEONE_ELSE_CHANGE_DISPLAY_NAME,
     payload: { id, newName },
   };
 }
