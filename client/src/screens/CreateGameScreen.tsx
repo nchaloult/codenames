@@ -13,6 +13,7 @@ import {
   removeBlueTeamPlayer,
 } from '../store/lobby/actions';
 import { constructAndSendEvent, EventKind } from '../realtime/ws';
+import { setIsOnRedTeam } from '../store/user/actions';
 
 // Redux business.
 
@@ -21,6 +22,7 @@ const mapState = (state: RootState) => ({
   gameID: state.game.id,
   displayName: state.user.displayName,
   isSettingDisplayName: state.user.isSettingDisplayName,
+  isOnRedTeam: state.user.isOnRedTeam,
   socket: state.websocket.socket,
 });
 const mapDispatch = {
@@ -28,6 +30,7 @@ const mapDispatch = {
   addBlueTeamPlayer: (player: Player) => addBlueTeamPlayer(player),
   removeRedTeamPlayer: (id: string) => removeRedTeamPlayer(id),
   removeBlueTeamPlayer: (id: string) => removeBlueTeamPlayer(id),
+  setIsOnRedTeam: (isOnRedTeam: boolean) => setIsOnRedTeam(isOnRedTeam),
 };
 const connector = connect(mapState, mapDispatch);
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -41,6 +44,13 @@ const CreateGameScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
       // connection issue.
       return;
     }
+    // Don't try to join the same team that we're already on.
+    if (
+      (isJoiningRedTeam && props.isOnRedTeam) ||
+      (!isJoiningRedTeam && !props.isOnRedTeam)
+    ) {
+      return;
+    }
 
     constructAndSendEvent(props.socket, EventKind.changeTeam, isJoiningRedTeam);
     if (isJoiningRedTeam) {
@@ -49,12 +59,14 @@ const CreateGameScreen: React.FC<PropsFromRedux> = (props: PropsFromRedux) => {
         displayName: props.displayName,
       });
       props.removeBlueTeamPlayer(props.playerID);
+      props.setIsOnRedTeam(true);
     } else {
       props.addBlueTeamPlayer({
         id: props.playerID,
         displayName: props.displayName,
       });
       props.removeRedTeamPlayer(props.playerID);
+      props.setIsOnRedTeam(false);
     }
   };
 

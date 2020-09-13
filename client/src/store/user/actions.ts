@@ -3,6 +3,7 @@ import {
   SET_DISPLAY_NAME,
   SET_IS_SETTING_DISPLAY_NAME,
   SET_USER_ID,
+  SET_IS_ON_RED_TEAM,
 } from './types';
 
 // Action creator for the SET_USER_ID action type.
@@ -28,5 +29,13 @@ export function setIsSettingDisplayName(
   return {
     type: SET_IS_SETTING_DISPLAY_NAME,
     payload: isSettingDisplayName,
+  };
+}
+
+// Action creator for the SET_IS_ON_RED_TEAM action type.
+export function setIsOnRedTeam(isOnRedTeam: boolean): UserActionTypes {
+  return {
+    type: SET_IS_ON_RED_TEAM,
+    payload: isOnRedTeam,
   };
 }

@@ -4,12 +4,14 @@ import {
   SET_DISPLAY_NAME,
   SET_IS_SETTING_DISPLAY_NAME,
   SET_USER_ID,
+  SET_IS_ON_RED_TEAM,
 } from './types';
 
 const initialState: UserState = {
   id: '',
   displayName: '',
   isSettingDisplayName: true,
+  isOnRedTeam: true,
 };
 
 export default function userReducer(
@@ -31,6 +33,11 @@ export default function userReducer(
       return {
         ...state,
         isSettingDisplayName: action.payload,
+      };
+    case SET_IS_ON_RED_TEAM:
+      return {
+        ...state,
+        isOnRedTeam: action.payload,
       };
     default:
       return state;
